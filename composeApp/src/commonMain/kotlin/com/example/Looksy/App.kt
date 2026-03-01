@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
+import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -45,9 +46,7 @@ fun App() {
                         }
                     }
                     composable("perfil") {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("Pantalla de Perfil")
-                        }
+                        VistaPerfil()
                     }
                     composable("ajustes") {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
