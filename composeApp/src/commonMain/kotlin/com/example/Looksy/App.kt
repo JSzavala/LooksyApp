@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
+import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -21,37 +22,50 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     MaterialTheme {
-        val navController = rememberNavController()
+        // Para saltar el login durante las pruebas
+        val saltarLoginParaPruebas = true
+        var estaLogueado by remember { mutableStateOf(saltarLoginParaPruebas) }
 
-        Scaffold(
-            bottomBar = {
-                VistaBarraInferior(navController = navController)
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+        if (!estaLogueado) {
+            VistaLogin(onLoginSuccess = { estaLogueado = true })
+        } else {
+            MainContent()
+        }
+    }
+}
+
+@Composable
+fun MainContent() {
+    val navController = rememberNavController()
+
+    Scaffold(
+        bottomBar = {
+            VistaBarraInferior(navController = navController)
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = "inicio"
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = "inicio"
-                ) {
-                    composable("inicio") {
-                        VistaListadoImagenes()
+                composable("inicio") {
+                    VistaListadoImagenes()
+                }
+                composable("buscar") {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Pantalla de Búsqueda")
                     }
-                    composable("buscar") {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("Pantalla de Búsqueda")
-                        }
-                    }
-                    composable("perfil") {
-                        VistaPerfil()
-                    }
-                    composable("ajustes") {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("Pantalla de Ajustes")
-                        }
+                }
+                composable("perfil") {
+                    VistaPerfil()
+                }
+                composable("ajustes") {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Pantalla de Ajustes")
                     }
                 }
             }

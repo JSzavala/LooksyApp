@@ -1,6 +1,8 @@
 package com.example.Looksy.Buscador.Presentacion
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -31,9 +33,8 @@ fun VistaBarraBusqueda(
         onActiveChange = onActiveChange,
         placeholder = { Text(placeholder) },
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = if (active) 0.dp else 16.dp)
+        modifier = modifier.heightIn(max = 56.dp),
+        windowInsets = WindowInsets(0.dp)
     ) {
         // TODO: Implementar la busqueda en si
     }

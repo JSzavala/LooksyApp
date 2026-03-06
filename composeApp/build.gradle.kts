@@ -40,6 +40,17 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
+            implementation("androidx.compose.ui:ui:1.6.0")
+            implementation("androidx.compose.material:material:1.6.0")
+            implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
+            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+            implementation("androidx.navigation:navigation-compose:2.7.6")
+
+            // Para cargar imágenes
+            implementation("io.coil-kt:coil-compose:2.5.0")
+
+            // Para layouts tipo grid (Staggered Grid)
+            implementation("com.google.accompanist:accompanist-flowlayout:0.32.0")
         }
     }
 }
