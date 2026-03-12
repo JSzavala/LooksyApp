@@ -30,7 +30,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
+            implementation(libs.navigation.compose)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -40,16 +40,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
-            implementation("androidx.compose.ui:ui:1.6.0")
-            implementation("androidx.compose.material:material:1.6.0")
-            implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
-            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-            implementation("androidx.navigation:navigation-compose:2.7.6")
-
-            // Para cargar imágenes
             implementation("io.coil-kt:coil-compose:2.5.0")
-
-            // Para layouts tipo grid (Staggered Grid)
             implementation("com.google.accompanist:accompanist-flowlayout:0.32.0")
         }
     }
@@ -60,7 +51,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.example.Looksy"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
