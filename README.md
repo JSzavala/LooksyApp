@@ -1,296 +1,49 @@
-looksy-app/
-│
-├── composeApp/                                   # Módulo principal de Compose Multiplatform
-│   ├── src/
-│   │   ├── commonMain/                           # Código compartido entre Android e iOS
-│   │   │   ├── kotlin/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── looksy/
-│   │   │   │               ├── App.kt            # Punto de entrada principal de la UI compartida
-│   │   │   │               ├── Platform.kt       # Definiciones expect/actual para funcionalidades específicas
-│   │   │   │               │
-│   │   │   │               ├── core/             # Núcleo de la aplicación (código compartido global)
-│   │   │   │               │   ├── di/           # Inyección de dependencias (Koin/Kodein)
-│   │   │   │               │   │   └── modulos.kt
-│   │   │   │               │   │
-│   │   │   │               │   ├── network/      # Cliente HTTP y configuración de red
-│   │   │   │               │   │   ├── cliente-http.kt
-│   │   │   │               │   │   ├── interceptores.kt
-│   │   │   │               │   │   └── manejo-errores.kt
-│   │   │   │               │   │
-│   │   │   │               │   ├── almacenamiento/ # Almacenamiento local
-│   │   │   │               │   │   ├── preferencias.kt  # DataStore
-│   │   │   │               │   │   ├── base-datos.kt    # SQLDelight
-│   │   │   │               │   │   └── cache.kt
-│   │   │   │               │   │
-│   │   │   │               │   ├── utilidades/    # Utilidades compartidas
-│   │   │   │               │   │   ├── extensiones.kt
-│   │   │   │               │   │   ├── validadores.kt
-│   │   │   │               │   │   └── formato.kt
-│   │   │   │               │   │
-│   │   │   │               │   └── constantes/    # Constantes globales
-│   │   │   │               │       ├── rutas.kt
-│   │   │   │               │       ├── claves-api.kt
-│   │   │   │               │       └── temas.kt
-│   │   │   │               │
-│   │   │   │               ├── datos/             # Capa de datos (repositorios y fuentes)
-│   │   │   │               │   ├── modelos/        # Modelos de datos compartidos
-│   │   │   │               │   │   ├── usuario.modelo.kt
-│   │   │   │               │   │   ├── producto.modelo.kt
-│   │   │   │               │   │   ├── atuendo.modelo.kt
-│   │   │   │               │   │   ├── tienda.modelo.kt
-│   │   │   │               │   │   ├── pedido.modelo.kt
-│   │   │   │               │   │   └── etiqueta.modelo.kt
-│   │   │   │               │   │
-│   │   │   │               │   ├── fuentes/        # Fuentes de datos (remotas y locales)
-│   │   │   │               │   │   ├── remotas/    # APIs y servicios remotos
-│   │   │   │               │   │   │   ├── autenticacion.api.kt
-│   │   │   │               │   │   │   ├── usuario.api.kt
-│   │   │   │               │   │   │   ├── producto.api.kt
-│   │   │   │               │   │   │   ├── atuendo.api.kt
-│   │   │   │               │   │   │   ├── tienda.api.kt
-│   │   │   │               │   │   │   └── pedido.api.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   └── locales/    # Bases de datos locales
-│   │   │   │               │   │       ├── dao/    # Objetos de acceso a datos
-│   │   │   │               │   │       │   ├── usuario.dao.kt
-│   │   │   │               │   │       │   ├── producto.dao.kt
-│   │   │   │               │   │       │   └── cache.dao.kt
-│   │   │   │               │   │       │
-│   │   │   │               │   │       └── entidades/ # Entidades para BD local
-│   │   │   │               │   │           ├── usuario.entidad.kt
-│   │   │   │               │   │           └── producto.entidad.kt
-│   │   │   │               │   │
-│   │   │   │               │   └── repositorios/   # Implementaciones de repositorios
-│   │   │   │               │       ├── autenticacion.repositorio.kt
-│   │   │   │               │       ├── usuario.repositorio.kt
-│   │   │   │               │       ├── producto.repositorio.kt
-│   │   │   │               │       ├── atuendo.repositorio.kt
-│   │   │   │               │       ├── tienda.repositorio.kt
-│   │   │   │               │       ├── pedido.repositorio.kt
-│   │   │   │               │       ├── busqueda.repositorio.kt
-│   │   │   │               │       └── imagenes.repositorio.kt
-│   │   │   │               │
-│   │   │   │               ├── dominio/            # Capa de dominio (casos de uso)
-│   │   │   │               │   ├── casos-uso/       # Casos de uso específicos
-│   │   │   │               │   │   ├── autenticacion/
-│   │   │   │               │   │   │   ├── iniciar-sesion.caso.kt
-│   │   │   │               │   │   │   ├── registrar-usuario.caso.kt
-│   │   │   │               │   │   │   ├── registrar-proveedor.caso.kt
-│   │   │   │               │   │   │   └── cerrar-sesion.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   ├── producto/
-│   │   │   │               │   │   │   ├── obtener-feed.caso.kt
-│   │   │   │               │   │   │   ├── filtrar-productos.caso.kt
-│   │   │   │               │   │   │   ├── obtener-detalle-producto.caso.kt
-│   │   │   │               │   │   │   └── obtener-productos-tienda.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   ├── atuendo/
-│   │   │   │               │   │   │   ├── publicar-atuendo.caso.kt
-│   │   │   │               │   │   │   ├── obtener-atuendos.caso.kt
-│   │   │   │               │   │   │   ├── obtener-atuendos-usuario.caso.kt
-│   │   │   │               │   │   │   └── interactuar-atuendo.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   ├── tienda/
-│   │   │   │               │   │   │   ├── obtener-tiendas.caso.kt
-│   │   │   │               │   │   │   ├── obtener-detalle-tienda.caso.kt
-│   │   │   │               │   │   │   └── obtener-ubicacion-tienda.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   ├── usuario/
-│   │   │   │               │   │   │   ├── obtener-perfil.caso.kt
-│   │   │   │               │   │   │   ├── actualizar-perfil.caso.kt
-│   │   │   │               │   │   │   ├── registrar-intereses.caso.kt
-│   │   │   │               │   │   │   └── obtener-intereses.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   ├── busqueda/
-│   │   │   │               │   │   │   ├── buscar-productos.caso.kt
-│   │   │   │               │   │   │   ├── buscar-tiendas.caso.kt
-│   │   │   │               │   │   │   └── buscar-atuendos.caso.kt
-│   │   │   │               │   │   │
-│   │   │   │               │   │   └── pedido/
-│   │   │   │               │   │       ├── crear-solicitud-compra.caso.kt
-│   │   │   │               │   │       ├── obtener-pedidos.caso.kt
-│   │   │   │               │   │       └── obtener-detalle-pedido.caso.kt
-│   │   │   │               │   │
-│   │   │   │               │   └── entidades/       # Entidades de dominio (reglas de negocio)
-│   │   │   │               │       ├── usuario.entidad.kt
-│   │   │   │               │       ├── producto.entidad.kt
-│   │   │   │               │       ├── atuendo.entidad.kt
-│   │   │   │               │       └── tienda.entidad.kt
-│   │   │   │               │
-│   │   │   │               └── presentacion/        # Capa de presentación (UI)
-│   │   │   │                   ├── navegacion/       # Navegación
-│   │   │   │                   │   ├── grafo-navegacion.kt
-│   │   │   │                   │   └── destinos.kt
-│   │   │   │                   │
-│   │   │   │                   ├── temas/            # Temas y estilos
-│   │   │   │                   │   ├── colores.kt
-│   │   │   │                   │   ├── tipografia.kt
-│   │   │   │                   │   └── tema.kt
-│   │   │   │                   │
-│   │   │   │                   ├── componentes/      # Componentes UI reutilizables
-│   │   │   │                   │   ├── botones.kt
-│   │   │   │                   │   ├── tarjetas.kt
-│   │   │   │                   │   ├── campos-texto.kt
-│   │   │   │                   │   ├── barras.kt
-│   │   │   │                   │   ├── cuadriculas.kt
-│   │   │   │                   │   ├── cargadores.kt
-│   │   │   │                   │   └── dialogs.kt
-│   │   │   │                   │
-│   │   │   │                   ├── pantallas/         # Pantallas principales por feature
-│   │   │   │                   │   ├── barra-inferior/  # Barra de navegación inferior
-│   │   │   │                   │   │   ├── datos/       # Modelos específicos
-│   │   │   │                   │   │   ├── dominio/     # Lógica específica
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── barra-inferior.kt
-│   │   │   │                   │   │       └── viewmodel.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── autenticacion/   # Pantallas de login/registro
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-inicio-sesion.kt
-│   │   │   │                   │   │       ├── pantalla-registro.kt
-│   │   │   │                   │   │       └── autenticacion.viewmodel.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── feed/            # Pantalla principal de feed
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-feed.kt
-│   │   │   │                   │   │       ├── feed.viewmodel.kt
-│   │   │   │                   │   │       └── componentes-feed.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── listado-imagenes/ # Galería de imágenes/outfits
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-listado.kt
-│   │   │   │                   │   │       ├── listado.viewmodel.kt
-│   │   │   │                   │   │       └── cuadricula-imagenes.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── buscador/        # Búsqueda y filtros
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-buscador.kt
-│   │   │   │                   │   │       ├── buscador.viewmodel.kt
-│   │   │   │                   │   │       ├── barra-busqueda.kt
-│   │   │   │                   │   │       └── filtros.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── perfil/          # Perfil de usuario
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-perfil.kt
-│   │   │   │                   │   │       ├── pantalla-editar-perfil.kt
-│   │   │   │                   │   │       ├── perfil.viewmodel.kt
-│   │   │   │                   │   │       └── componentes-perfil.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── producto/        # Detalle de producto
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-detalle-producto.kt
-│   │   │   │                   │   │       ├── producto.viewmodel.kt
-│   │   │   │                   │   │       └── galeria-producto.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── tienda/          # Detalle de tienda
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-detalle-tienda.kt
-│   │   │   │                   │   │       ├── tienda.viewmodel.kt
-│   │   │   │                   │   │       └── mapa-ubicacion.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   ├── carrito/         # Carrito de compras
-│   │   │   │                   │   │   ├── datos/
-│   │   │   │                   │   │   ├── dominio/
-│   │   │   │                   │   │   └── presentacion/
-│   │   │   │                   │   │       ├── pantalla-carrito.kt
-│   │   │   │                   │   │       ├── carrito.viewmodel.kt
-│   │   │   │                   │   │       └── item-carrito.kt
-│   │   │   │                   │   │
-│   │   │   │                   │   └── proveedor/       # Funcionalidades para proveedores
-│   │   │   │                   │       ├── datos/
-│   │   │   │                   │       ├── dominio/
-│   │   │   │                   │       └── presentacion/
-│   │   │   │                   │           ├── pantalla-gestion-productos.kt
-│   │   │   │                   │           ├── pantalla-agregar-producto.kt
-│   │   │   │                   │           ├── pantalla-actualizar-inventario.kt
-│   │   │   │                   │           ├── proveedor.viewmodel.kt
-│   │   │   │                   │           └── formulario-producto.kt
-│   │   │   │                   │
-│   │   │   │                   └── viewmodels/          # ViewModels globales
-│   │   │   │                       ├── sesion.viewmodel.kt
-│   │   │   │                       └── tema.viewmodel.kt
-│   │   │   │
-│   │   │   └── resources/          # Recursos compartidos (imágenes, strings)
-│   │   │       ├── drawable/
-│   │   │       ├── values/
-│   │   │       │   ├── strings.xml
-│   │   │       │   └── colors.xml
-│   │   │       └── fonts/
-│   │   │
-│   │   ├── androidMain/             # Código específico para Android
-│   │   │   ├── kotlin/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── looksy/
-│   │   │   │               ├── platform/
-│   │   │   │               │   ├── camara.actual.kt
-│   │   │   │               │   ├── notificaciones.actual.kt
-│   │   │   │               │   ├── biometria.actual.kt
-│   │   │   │               │   ├── mapas.actual.kt
-│   │   │   │               │   └── almacenamiento.actual.kt
-│   │   │   │               │
-│   │   │   │               └── MainActivity.kt
-│   │   │   │
-│   │   │   └── resources/
-│   │   │
-│   │   └── iosMain/                 # Código específico para iOS
-│   │       ├── kotlin/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── looksy/
-│   │       │               └── platform/
-│   │       │                   ├── camara.actual.kt
-│   │       │                   ├── notificaciones.actual.kt
-│   │       │                   ├── biometria.actual.kt
-│   │       │                   ├── mapas.actual.kt
-│   │       │                   └── almacenamiento.actual.kt
-│   │       │
-│   │       └── resources/
-│   │
-├── iosApp/                           # Proyecto nativo de iOS
-│   ├── iosApp.xcodeproj/
-│   └── iosApp/
-│
-├── gradle/
-│   └── libs.versions.toml            # Versiones de dependencias
-│
-├── build.gradle.kts                   # Configuración principal
-├── settings.gradle.kts                 # Configuración de módulos
-│
-├── pruebas/                            # Pruebas (análogo al backend)
-│   ├── unitarias/
-│   │   ├── dominio/
-│   │   ├── datos/
-│   │   └── presentacion/
-│   │
-│   ├── integracion/
-│   │   └── repositorios/
-│   │
-│   └── e2e/
-│       └── flujos/
-│
-├── scripts/                            # Scripts de utilidad
-│   ├── generar-iconos.sh
-│   └── build.sh
-│
-├── .env                                 # Variables de entorno
-├── .env.ejemplo                         # Ejemplo de variables de entorno
-├── .gitignore                           # Archivos ignorados por git
-├── gradle.properties                     # Propiedades de Gradle
-└── README.md                             # Documentación del proyecto
+# LooksyApp - Kotlin Multiplatform
+
+LooksyApp es una aplicación móvil desarrollada con **Kotlin Multiplatform (KMP)** y **Compose Multiplatform**, lo que permite compartir la lógica de negocio y la interfaz de usuario entre Android e iOS.
+
+##  Arquitectura del Proyecto
+
+La aplicación sigue una arquitectura de **Diseño por Capas (Clean Architecture)** adaptada para KMP, organizada por módulos de funcionalidades (features). Cada funcionalidad se divide en tres capas principales para asegurar la separación de responsabilidades:
+
+1.  **Datos (Data):** Gestión de modelos de datos, implementaciones de repositorios y llamadas a APIs o bases de datos locales.
+2.  **Dominio (Domain):** Contiene la lógica de negocio pura, entidades y casos de uso. Es independiente de la plataforma y de la interfaz de usuario.
+3.  **Presentación (Presentation):** Contiene los componentes de UI (Composables) y la lógica de estado de la vista (ViewModels).
+
+##  Estructura de Carpetas
+--CommonMain: Codigo el cual comparten tanto la version de Android como la version de IOs de la app
+
+Todas las siguientes carpetas se encuentran dentro de la dirección de: `composeApp/src/commonMain/kotlin/com/example/Looksy`
+
+--- Buscador
+-  **Buscador/Datos:** Modelos de búsqueda y gestión de datos/endpoints relacionados con la funcionalidad de búsqueda.
+-   **Buscador/Dominio:** Lógica de negocio específica para el filtrado y procesamiento de búsquedas.
+-   **Buscador/Presentacion:** Componentes visuales como y pantallas de resultados.
+
+--- Login
+-   **Login/Datos:** Modelos de autenticación y manejo de credenciales.
+-   **Login/Dominio:** Reglas de validación de acceso y gestión de sesiones.
+-   **Login/Presentacion:** Pantallas de inicio de sesión y registro.
+
+--- Perfil
+-   **Perfil/Datos:** Modelos del perfil de usuario y servicios de obtención de datos personales.
+-   **Perfil/Dominio:** Lógica para la edición de perfil y gestión de preferencias.
+-   **Perfil/Presentacion:** Interfaz de usuario para visualizar y editar el perfil del usuario.
+
+--- ListadoImagenes
+-   **ListadoImagenes/Datos:** Modelos de posts y servicios de carga de imágenes desde el servidor.
+-   **ListadoImagenes/Dominio:** Lógica para el manejo de feeds y feeds de imágenes.
+-   **ListadoImagenes/Presentacion:** Vistas de rejilla y listas para mostrar las imágenes en la aplicación.
+
+--- BarraInferior
+-   **BarraInferior/Datos:** Definición de los modelos para los ítems de navegación.
+-   **BarraInferior/Dominio:** Lógica de navegación y definición de rutas.
+-   **BarraInferior/Presentacion:** Implementación visual de la barra de navegación inferior.
+
+--- Otros archivos raíz
+-   **App.kt:** Punto de entrada principal de la UI compartida.
+-   **Platform.kt:** Definiciones de `expect/actual` para funcionalidades específicas de cada plataforma.
+
+--- Carpetas fuera de CommonMain
+- IOsMain: Funcionalidades especificas para IOS
+- AndroidMain: Funcionalidades Especificas para Android
