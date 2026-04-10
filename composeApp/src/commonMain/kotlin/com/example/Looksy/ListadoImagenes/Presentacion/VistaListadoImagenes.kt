@@ -21,17 +21,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.Looksy.Buscador.Presentacion.VistaBarraBusqueda
+import com.example.Looksy.MenuDesplazableInferior.Presentacion.VistaMenuDesplazableInferior
 
 @Composable
 fun VistaListadoImagenes() {
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-
-    // Generamos una lista de "colores" para simular diferentes imágenes
+    var mostrarMenu by remember { mutableStateOf(false) }
     val placeholderImages = remember {
         listOf(Color.Red, Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Magenta, Color.Cyan)
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,70 +51,21 @@ fun VistaListadoImagenes() {
             contentPadding = PaddingValues(bottom = 16.dp) // Espacio al final
         ) {
             items(placeholderImages) { color ->
-                PostItem(color = color)
+                PostItem(
+                    color = color,
+                    onLongClick = {
+                        mostrarMenu = true
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun PostItem(color: Color) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        Column {
-            // Cabecera del post (Avatar + Nombre)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (mostrarMenu) {
+            VistaMenuDesplazableInferior(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Usuario_Looksy",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                )
-            }
-
-            // Imagen (Rectángulo de color)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp) // Altura fija para el feed
-                    .background(color)
-            )
-
-            // Pie del post (Likes / Descripción)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = "1,234 likes",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.ExtraBold)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Esta es una descripción de ejemplo para el post de LooksyApp usando Compose Multiplatform.",
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2
-                )
-                Text(
-                    text = "Ver los 15 comentarios",
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Text("Opción 1")
+                Text("Opción 2")
+                Text("Opción 3")
             }
         }
     }

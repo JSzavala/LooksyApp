@@ -19,7 +19,6 @@ import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App() {
     MaterialTheme {
         // Para saltar el login durante las pruebas
@@ -37,7 +36,6 @@ fun App() {
 @Composable
 fun MainContent() {
     val navController = rememberNavController()
-
     Scaffold(
         bottomBar = {
             VistaBarraInferior(navController = navController)
