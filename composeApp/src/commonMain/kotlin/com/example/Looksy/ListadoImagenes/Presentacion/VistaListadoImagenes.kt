@@ -31,41 +31,47 @@ fun VistaListadoImagenes() {
     val placeholderImages = remember {
         listOf(Color.Red, Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Magenta, Color.Cyan)
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 4.dp)
-    ) {
-        VistaBarraBusqueda(
-            query = query,
-            onQueryChange = { query = it },
-            onSearch = { active = false },
-            active = active,
-            onActiveChange = { active = it },
-            modifier = Modifier.fillMaxWidth()
-        )
 
-        // El Feed tipo Instagram
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp) // Espacio al final
+    // Usamos Box para que el menú pueda aparecer "encima" de la lista
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 4.dp)
         ) {
-            items(placeholderImages) { color ->
-                PostItem(
-                    color = color,
-                    onLongClick = {
-                        mostrarMenu = true
-                    }
-                )
+            VistaBarraBusqueda(
+                query = query,
+                onQueryChange = { query = it },
+                onSearch = { active = false },
+                active = active,
+                onActiveChange = { active = it },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                items(placeholderImages) { color ->
+                    PostItem(
+                        color = color,
+                        onClick = {
+                            mostrarMenu = true // Esto ahora funcionará visualmente
+                        }
+                    )
+                }
             }
         }
+
+        // El menú se dibuja al final para que quede por encima de todo
         if (mostrarMenu) {
             VistaMenuDesplazableInferior(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                onDismiss = { mostrarMenu = false },
+                modifier = Modifier.align(Alignment.BottomCenter) // Alineado abajo
             ) {
-                Text("Opción 1")
-                Text("Opción 2")
-                Text("Opción 3")
+                Text("Opción 1", modifier = Modifier.padding(16.dp))
+                Text("Opción 2", modifier = Modifier.padding(16.dp))
+                Text("Opción 3", modifier = Modifier.padding(16.dp))
             }
         }
     }
