@@ -14,22 +14,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
-import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
 
 @Composable
 fun App() {
     MaterialTheme {
         // Para saltar el login durante las pruebas
-        val saltarLoginParaPruebas = true
-        var estaLogueado by remember { mutableStateOf(saltarLoginParaPruebas) }
-
-        if (!estaLogueado) {
-            VistaLogin(onLoginSuccess = { estaLogueado = true })
-        } else {
-            MainContent()
-        }
+//        val saltarLoginParaPruebas = true
+//        var estaLogueado by remember { mutableStateOf(saltarLoginParaPruebas) }
+//
+//        if (!estaLogueado) {
+//            VistaLogin(onLoginSuccess = { estaLogueado = true })
+//        } else {
+//            MainContent()
+//        }
+        VistaListadoProductos()
     }
 }
 
