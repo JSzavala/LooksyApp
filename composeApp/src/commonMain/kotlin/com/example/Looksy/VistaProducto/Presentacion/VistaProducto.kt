@@ -71,6 +71,7 @@ fun VistaProducto(producto: Producto) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+
             // Botones de acción
             Row(
                 modifier = Modifier.fillMaxWidth(),
