@@ -30,14 +30,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VistaAgregarProducto(onVolver: () -> Unit) {
-    // Estados para los campos de texto
-    var nombrePrenda by remember { mutableStateOf("") }
-    var precio by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var imagenSeleccionada by remember { mutableStateOf<Any?>(null) }
-    var tallaSeleccionada by remember { mutableStateOf("") }
+fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto(),
+    onVolver: () -> Unit) {
+    val scrollState = rememberScrollState()
     val tallas = listOf("CH", "M", "G", "XL")
+
 
     Scaffold(
         topBar = {
@@ -56,24 +53,26 @@ fun VistaAgregarProducto(onVolver: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text("Detalles de la prenda", style = MaterialTheme.typography.bodySmall)
 
             OutlinedTextField(
-                value = nombrePrenda,
-                onValueChange = { nombrePrenda = it },
+                value = viewModel.nombrePrenda,
+                onValueChange = { viewModel.nombrePrenda = it },
                 label = { Text("Nombre de la prenda") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
 
             OutlinedTextField(
-                value = precio,
-                onValueChange = { precio = it },
+                value = viewModel.precioPrenda,
+                onValueChange = { viewModel.precioPrenda = it },
                 label = { Text("Precio") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
             Column {
                 Text("Talla disponible:", style = MaterialTheme.typography.bodyLarge)
@@ -82,9 +81,20 @@ fun VistaAgregarProducto(onVolver: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     tallas.forEach { talla ->
+                        // Comprobamos si la talla ya existe en la lista del ViewModel
+                        val estaSeleccionada = viewModel.tallasSeleccionadas.contains(talla)
+
                         FilterChip(
-                            selected = tallaSeleccionada == talla,
-                            onClick = { tallaSeleccionada = talla },
+                            selected = estaSeleccionada,
+                            onClick = {
+                                if (estaSeleccionada) {
+                                    // Si ya estaba, la removemos (deseleccionar)
+                                    viewModel.tallasSeleccionadas.remove(talla)
+                                } else {
+                                    // Si no estaba, la agregamos
+                                    viewModel.tallasSeleccionadas.add(talla)
+                                }
+                            },
                             label = { Text(talla) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color(0xFF83B766), // Tu verde
@@ -96,11 +106,11 @@ fun VistaAgregarProducto(onVolver: () -> Unit) {
             }
 
             OutlinedTextField(
-                value = descripcion,
-                onValueChange = { descripcion = it },
-                label = { Text("Descripción") },
+                value = viewModel.descripcionPrenda,
+                onValueChange = { viewModel.descripcionPrenda = it },
+                label = { Text("Descripción de la prenda") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 3
+                shape = RoundedCornerShape(12.dp)
             )
 
             Box(
@@ -108,34 +118,75 @@ fun VistaAgregarProducto(onVolver: () -> Unit) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .background(Color(0xFFF0F0F0), shape = RoundedCornerShape(12.dp))
-                    .clickable { /* Aquí se abriría la galería después */ },
+                    .clickable { /* Aquí se abrira la galeria */ },
                 contentAlignment = Alignment.Center
             ) {
-                if (imagenSeleccionada == null) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.AddAPhoto, // Necesitas importar Icons.Default.AddAPhoto
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = Color.Gray
-                        )
-                        Text("Toca para añadir el artículo", color = Color.Gray)
-                    }
-                } else {
-                    // Aquí se mostraría la imagen una vez seleccionada
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.AddAPhoto,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Gray
+                    )
+                    Text("Toca para añadir el artículo", color = Color.Gray)
                 }
             }
 
             Button(
-                onClick = { /* Aquí conectarás con tu backend de Node.js después */ },
+                onClick = { viewModel.publicar() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF83B766), // Color de fondo (ejemplo: un rosa pastel)
-                    contentColor = Color.White// Color del texto (ejemplo: negro)
+                    containerColor = Color(0xFF83B766),
+                    contentColor = Color.White
                 ),
-                modifier = Modifier.fillMaxWidth().height(50.dp)
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Publicar Producto")
             }
+        }
+    }
+}
+@Composable
+fun PantallaAgregarProducto(viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+
+        // El valor del TextField ahora viene del ViewModel
+        OutlinedTextField(
+            value = viewModel.nombrePrenda,
+            onValueChange = { viewModel.nombrePrenda = it },
+            label = { Text("Nombre de la prenda") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = viewModel.precioPrenda,
+            onValueChange = { viewModel.precioPrenda = it },
+            label = { Text("Precio") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+
+        Button(
+            onClick = { viewModel.publicar() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF83B766),
+                contentColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text("Publicar Producto")
         }
     }
 }

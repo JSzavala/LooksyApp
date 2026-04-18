@@ -1,9 +1,11 @@
 package com.example.Looksy.BarraInferior.Dominio
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
@@ -28,6 +30,12 @@ object ItemsNavegacion {
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             route = "ajustes"
+        ),
+        ModeloItemBarraInf(
+            title = "Agregar",
+            selectedIcon = Icons.Filled.Add,
+            unselectedIcon = Icons.Outlined.Add,
+            route = "agregar"
         )
     )
 }
