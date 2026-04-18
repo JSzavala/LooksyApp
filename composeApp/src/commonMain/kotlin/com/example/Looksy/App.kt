@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
+import com.example.Looksy.SubirProducto.VistaAgregarProducto
 import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
 
 @Composable
@@ -29,7 +30,7 @@ fun App() {
 //        } else {
 //            MainContent()
 //        }
-        VistaListadoProductos()
+        MainContent()
     }
 }
 
@@ -60,6 +61,9 @@ fun MainContent() {
                 }
                 composable("perfil") {
                     VistaPerfil()
+                }
+                composable("agregar"){
+                    VistaAgregarProducto(onVolver = { navController.popBackStack() })
                 }
                 composable("ajustes") {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
