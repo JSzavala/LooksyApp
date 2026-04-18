@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
+import com.example.Looksy.CrudTienda.Presentacion.VistaCrudtienda
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
@@ -29,7 +30,9 @@ fun App() {
 //        } else {
 //            MainContent()
 //        }
-        VistaListadoProductos()
+       // VistaListadoProductos()
+        VistaCrudtienda()
+
     }
 }
 
