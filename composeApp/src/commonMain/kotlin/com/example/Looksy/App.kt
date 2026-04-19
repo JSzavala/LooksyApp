@@ -13,10 +13,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
+import com.example.Looksy.CrearCuenta.CuentaComprador
+import com.example.Looksy.CrearCuenta.CuentaTienda
 import com.example.Looksy.CrudTienda.Presentacion.VistaCrudtienda
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
+import com.example.Looksy.SeleccionTipoCuenta.Presentacion.VistaSeleccionTipoCuenta
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
 import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
 
@@ -26,13 +29,43 @@ fun App() {
         //Para saltar el login durante las pruebas
         val saltarLoginParaPruebas = false
         var estaLogueado by remember { mutableStateOf(saltarLoginParaPruebas) }
+        var mostrarSeleccionCuenta by remember { mutableStateOf(false) }
+        var pantallaRegistro by remember { mutableStateOf<String?>(null) }
 
-        if (!estaLogueado) {
-            VistaLogin(onLoginSuccess = { estaLogueado = true })
-        } else {
-            MainContent()
-        }
 //        MainContent()
+        when {
+            pantallaRegistro == "tienda" -> {
+                CuentaTienda(
+                    onVolver = { pantallaRegistro = null }
+                )
+            }
+
+            pantallaRegistro == "comprador" -> {
+                CuentaComprador(
+                    onVolver = { pantallaRegistro = null }
+                )
+            }
+
+            mostrarSeleccionCuenta -> {
+                VistaSeleccionTipoCuenta(
+                    onSeleccionar = { tipo ->
+                        pantallaRegistro = tipo   //aquí decide a dónde ir
+                    },
+                    onVolver = { mostrarSeleccionCuenta = false }
+                )
+            }
+
+            !estaLogueado -> {
+                VistaLogin(
+                    onLoginSuccess = { estaLogueado = true },
+                    onCreateAccount = { mostrarSeleccionCuenta = true }
+                )
+            }
+
+            else -> {
+                MainContent()
+            }
+        }
     }
 }
 
@@ -75,6 +108,7 @@ fun MainContent() {
                         Text("Pantalla de Ajustes")
                     }
                 }
+
             }
         }
     }

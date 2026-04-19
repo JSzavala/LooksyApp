@@ -7,14 +7,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.input.VisualTransformation
+
 
 @Composable
 fun VistaLogin(
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onCreateAccount: () -> Unit
 ) {
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
+    var mostrarContrasena by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -40,8 +49,25 @@ fun VistaLogin(
             value = contrasena,
             onValueChange = { contrasena = it },
             label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            visualTransformation = if (mostrarContrasena)
+                VisualTransformation.None
+            else
+                PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (mostrarContrasena)
+                    Icons.Default.Visibility
+                else
+                    Icons.Default.VisibilityOff
+
+                IconButton(onClick = {
+                    mostrarContrasena = !mostrarContrasena
+                }) {
+                    Icon(imageVector = icon, contentDescription = "Mostrar contraseña")
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
         )
 
         if (error != null) {
@@ -63,5 +89,18 @@ fun VistaLogin(
         ) {
             Text("Iniciar Sesión")
         }
+
+        Spacer(modifier = Modifier.height(16.dp)) // espacio
+
+        Text(
+            text = "Crear cuenta",
+            modifier = Modifier
+                .clickable { onCreateAccount() }
+                .padding(top = 8.dp),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                textDecoration = TextDecoration.Underline
+            )
+        )
     }
 }
