@@ -10,6 +10,7 @@ class Funcionalidad_subirProducto {
     var precioPrenda by mutableStateOf("")
     var tallasSeleccionadas = mutableStateListOf<String>()
     var descripcionPrenda by mutableStateOf("")
+    var stockPrenda by mutableStateOf("")
     var imagenPrenda by mutableStateOf("")
 
     fun publicar(navController: NavHostController) {

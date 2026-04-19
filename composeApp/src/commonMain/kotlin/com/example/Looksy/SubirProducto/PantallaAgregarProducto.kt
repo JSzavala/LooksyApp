@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
@@ -25,9 +26,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +71,9 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                 value = viewModel.nombrePrenda,
                 onValueChange = { viewModel.nombrePrenda = it },
                 label = { Text("Nombre de la prenda") },
+                leadingIcon = {
+                    Icon(Icons.Default.Label, contentDescription = null, tint = Color(0xFF6750A4))
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -73,8 +82,22 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                 value = viewModel.precioPrenda,
                 onValueChange = { viewModel.precioPrenda = it },
                 label = { Text("Precio") },
+                leadingIcon = {
+                    Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color(0xFF6750A4))
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
+            )
+            OutlinedTextField(
+                value = viewModel.stockPrenda,
+                onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.stockPrenda = it },
+                label = { Text("Stock") },
+                leadingIcon = {
+                    Icon(Icons.Default.Inventory, contentDescription = null, tint = Color(0xFF6750A4))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Column {
                 Text("Talla disponible:", style = MaterialTheme.typography.bodyLarge)
@@ -99,7 +122,7 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                             },
                             label = { Text(talla) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF83B766), // Tu verde
+                                selectedContainerColor = Color(0xFF6750A4), //  verde 0xFF83B766
                                 selectedLabelColor = Color.White
                             )
                         )
@@ -111,6 +134,9 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                 value = viewModel.descripcionPrenda,
                 onValueChange = { viewModel.descripcionPrenda = it },
                 label = { Text("Descripción de la prenda") },
+                leadingIcon = {
+                    Icon(Icons.Default.Description, contentDescription = null, tint = Color(0xFF6750A4))
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -137,7 +163,7 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
             Button(
                 onClick = { viewModel.publicar(navController) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF83B766),
+                    containerColor = Color(0xFF6750A4),
                     contentColor = Color.White
                 ),
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -148,53 +174,25 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
         }
     }
 }
-/*@Composable
-fun PantallaAgregarProducto(viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto()) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-
-        // El valor del TextField ahora viene del ViewModel
-        OutlinedTextField(
-            value = viewModel.nombrePrenda,
-            onValueChange = { viewModel.nombrePrenda = it },
-            label = { Text("Nombre de la prenda") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedTextField(
-            value = viewModel.precioPrenda,
-            onValueChange = { viewModel.precioPrenda = it },
-            label = { Text("Precio") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
 
-        Button(
-            onClick = { viewModel.publicar() },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF83B766),
-                contentColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Publicar Producto")
-        }
-    }
-}*/
-
-/*@Preview
+@Preview(showBackground = true)
 @Composable
 fun VistaPreviaAgregar() {
-    VistaAgregarProducto(onVolver = {})
-}*/
+    // Usamos una instancia real del ViewModel para la previsualización
+    val viewModelFalso = Funcionalidad_subirProducto()
+
+    // Para el NavController, en Preview podemos pasar uno dummy o manejarlo como opcional
+    // Pero lo más sencillo es que tu vista acepte un NavHostController? o simplemente
+    // no usar el navController dentro del diseño visual.
+
+    MaterialTheme { // Es buena práctica envolverlo en tu tema
+        VistaAgregarProducto(
+            viewModel = viewModelFalso,
+            onVolver = {},
+            // Si NavHostController da problemas en Preview, asegúrate de que no se use
+            // dentro de la lógica de dibujo de la interfaz
+            navController = androidx.navigation.compose.rememberNavController()
+        )
+    }
+}
