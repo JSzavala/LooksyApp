@@ -3,6 +3,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 
 class Funcionalidad_subirProducto {
     var nombrePrenda by mutableStateOf("")
@@ -11,13 +12,14 @@ class Funcionalidad_subirProducto {
     var descripcionPrenda by mutableStateOf("")
     var imagenPrenda by mutableStateOf("")
 
-    fun publicar() {
+    fun publicar(navController: NavHostController) {
         if (nombrePrenda.isNotEmpty() && precioPrenda.isNotEmpty()) {
             // Aquí conectarás con tu API de Node.js/Prisma
             println("Subiendo $nombrePrenda a la base de datos MySQL...")
         } else {
             println("Error: Faltan datos por llenar")
         }
+        navController.navigate("perfil");
     }
 
 

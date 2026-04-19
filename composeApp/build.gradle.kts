@@ -40,11 +40,19 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
-            implementation("androidx.compose.ui:ui:1.6.0")
+                // Correct Multiplatform Navigation
+            implementation(libs.navigation.compose)
+                // Lifecycle (Multiplatform versions)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
+                // Image Loading (Use Coil 3 for Multiplatform support)
+                // Add this to libs.versions.toml: coil = "3.0.0-alpha06"
+                // implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
+            /*implementation("androidx.compose.ui:ui:1.6.0")
             implementation("androidx.compose.material:material:1.6.0")
             implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
             implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-            implementation("androidx.navigation:navigation-compose:2.7.6")
+            implementation("androidx.navigation:navigation-compose:2.7.6")*/
 
             // Para cargar imágenes
             implementation("io.coil-kt:coil-compose:2.5.0")
@@ -83,5 +91,6 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose)
     debugImplementation(compose.uiTooling)
 }

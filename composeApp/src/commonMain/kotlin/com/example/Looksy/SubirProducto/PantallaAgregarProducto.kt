@@ -26,15 +26,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto(),
-    onVolver: () -> Unit) {
+    onVolver: () -> Unit,
+    navController: NavHostController) {
     val scrollState = rememberScrollState()
     val tallas = listOf("CH", "M", "G", "XL")
-
+    
 
     Scaffold(
         topBar = {
@@ -133,7 +135,7 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
             }
 
             Button(
-                onClick = { viewModel.publicar() },
+                onClick = { viewModel.publicar(navController) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF83B766),
                     contentColor = Color.White
@@ -146,7 +148,7 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
         }
     }
 }
-@Composable
+/*@Composable
 fun PantallaAgregarProducto(viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto()) {
     Column(
         modifier = Modifier
@@ -189,10 +191,10 @@ fun PantallaAgregarProducto(viewModel: Funcionalidad_subirProducto = Funcionalid
             Text("Publicar Producto")
         }
     }
-}
+}*/
 
-@Preview
+/*@Preview
 @Composable
 fun VistaPreviaAgregar() {
     VistaAgregarProducto(onVolver = {})
-}
+}*/

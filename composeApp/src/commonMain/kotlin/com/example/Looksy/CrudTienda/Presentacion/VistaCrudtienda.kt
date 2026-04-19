@@ -15,11 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.Looksy.CrudTienda.Presentacion.Datos.ProductoTienda
+import com.example.Looksy.SubirProducto.VistaAgregarProducto
 
 
 @Composable
-fun VistaCrudtienda() {
+fun VistaCrudtienda(navController: NavHostController) {
     var listaProductos by remember { mutableStateOf(listOf<ProductoTienda>()) }
     val verdeLooksy = Color(0xFF81C748)
 
@@ -41,13 +43,14 @@ fun VistaCrudtienda() {
                 Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Surface(
-                            onClick = {
-                                listaProductos = listaProductos + ProductoTienda(
+                            onClick ={
+                                navController.navigate("agregar");
+                                /*listaProductos = listaProductos + ProductoTienda(
                                     listaProductos.size,
                                     "Producto Nuevo",
                                     "$0.00",
                                     Color.LightGray
-                                )
+                                )*/
                             },
                             modifier = Modifier.size(160.dp),
                             shape = CircleShape,
