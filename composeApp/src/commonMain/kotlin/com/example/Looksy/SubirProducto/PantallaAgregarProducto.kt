@@ -42,8 +42,6 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
     navController: NavHostController) {
     val scrollState = rememberScrollState()
     val tallas = listOf("CH", "M", "G", "XL")
-    
-
     Scaffold(
         topBar = {
             TopAppBar(

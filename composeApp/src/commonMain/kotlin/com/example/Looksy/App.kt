@@ -12,14 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.CrearCuenta.CuentaComprador
 import com.example.Looksy.CrearCuenta.CuentaTienda
+import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.VistaCrudtienda
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import com.example.Looksy.SeleccionTipoCuenta.Presentacion.VistaSeleccionTipoCuenta
+import com.example.Looksy.SubirProducto.Funcionalidad_subirProducto
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
 import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
 
@@ -97,8 +101,28 @@ fun MainContent() {
                 composable("perfil") {
                     VistaCrudtienda(navController)
                 }
-                composable("agregar"){
+                composable(
+                    route = "agregar?productoId={productoId}",
+                    arguments = listOf(
+                        navArgument("productoId") {
+                            type = NavType.StringType
+                            nullable = true
+                            defaultValue = null
+                        }
+                    )
+                ) { backStackEntry ->
+                    val productoIdStr = backStackEntry.arguments?.getString("productoId")
+                    val productoId = productoIdStr?.toIntOrNull()
+                    val viewModel = remember { Funcionalidad_subirProducto() }
+                    LaunchedEffect(productoId) {
+                        if (productoId != null) {
+                            ProductoRepository.obtenerProductoPorId(productoId)?.let {
+                                viewModel.cargarDatosParaEditar(it)
+                            }
+                        }
+                    }
                     VistaAgregarProducto(
+                        viewModel = viewModel,
                         navController = navController,
                         onVolver = { navController.popBackStack() }
                     )
