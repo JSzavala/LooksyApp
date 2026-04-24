@@ -15,11 +15,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.Looksy.CrudTienda.Datos.ProductoRepository
+import com.example.Looksy.CrudTienda.Presentacion.Datos.ProductoTienda
+import com.example.Looksy.SubirProducto.VistaAgregarProducto
 
 
 @Composable
-fun VistaCrudtienda() {
-    var listaProductos by remember { mutableStateOf(listOf<ProductoTienda>()) }
+fun VistaCrudtienda(navController: NavHostController) {
+    val listaProductos by ProductoRepository.productos.collectAsState()
+    //var listaProductos by remember { mutableStateOf(listOf<ProductoTienda>()) }
     val verdeLooksy = Color(0xFF81C748)
 
     Box(
@@ -40,13 +46,14 @@ fun VistaCrudtienda() {
                 Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Surface(
-                            onClick = {
-                                listaProductos = listaProductos + ProductoTienda(
+                            onClick ={
+                                navController.navigate("agregar");
+                                /*listaProductos = listaProductos + ProductoTienda(
                                     listaProductos.size,
                                     "Producto Nuevo",
                                     "$0.00",
                                     Color.LightGray
-                                )
+                                )*/
                             },
                             modifier = Modifier.size(160.dp),
                             shape = CircleShape,
@@ -76,7 +83,7 @@ fun VistaCrudtienda() {
                     modifier = Modifier.weight(1f)
                 ) {
                     items(listaProductos) { producto ->
-                        CardProducto(producto, verdeLooksy)
+                        CardProducto( producto, verdeLooksy,navController)
                     }
                 }
             }
@@ -84,13 +91,13 @@ fun VistaCrudtienda() {
 
         if (listaProductos.isNotEmpty()) {
             FloatingActionButton(
-                onClick = {
-                    listaProductos = listaProductos + ProductoTienda(
+                onClick = { navController.navigate("agregar");
+                    /*listaProductos = listaProductos + ProductoTienda(
                         listaProductos.size,
                         "Nuevo Item",
                         "$0.00",
                         Color.Gray
-                    )
+                    )*/
                 },
                 containerColor = verdeLooksy,
                 contentColor = Color.White,
@@ -104,7 +111,7 @@ fun VistaCrudtienda() {
 }
 
 @Composable
-fun CardProducto(producto: ProductoTienda, colorBoton: Color) {
+fun CardProducto(producto: ProductoTienda, colorBoton: Color, navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -127,7 +134,9 @@ fun CardProducto(producto: ProductoTienda, colorBoton: Color) {
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Button(
-                onClick = { /* Acción modificar */ },
+                onClick = {
+                    navController.navigate("agregar?productoId=${producto.id}")
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = colorBoton),
                 modifier = Modifier.weight(1f).height(32.dp),
                 contentPadding = PaddingValues(0.dp),
@@ -136,7 +145,9 @@ fun CardProducto(producto: ProductoTienda, colorBoton: Color) {
                 Text("Modificar", fontSize = 10.sp, color = Color.White)
             }
             Button(
-                onClick = { /* Acción eliminar */ },
+                onClick = {
+                    ProductoRepository.eliminarProducto(producto.id)
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = colorBoton),
                 modifier = Modifier.weight(1f).height(32.dp),
                 contentPadding = PaddingValues(0.dp),
