@@ -26,7 +26,7 @@ import com.example.Looksy.SubirProducto.VistaAgregarProducto
 fun VistaCrudtienda(navController: NavHostController) {
     val listaProductos by ProductoRepository.productos.collectAsState()
     //var listaProductos by remember { mutableStateOf(listOf<ProductoTienda>()) }
-    val verdeLooksy = Color(0xFF81C748)
+    val verdeLooksy = MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier

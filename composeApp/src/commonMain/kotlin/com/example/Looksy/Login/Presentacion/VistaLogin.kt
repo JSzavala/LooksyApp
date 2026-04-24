@@ -97,7 +97,7 @@ fun VistaLogin(
 
         Button(
             onClick = {
-                if (usuario == "1234" && contrasena == "1234") {
+                if (usuario.trim() == "deportiva" && contrasena.trim() == "1234") {
                     onLoginSuccess()
                 } else {
                     error = "Credenciales incorrectas"
