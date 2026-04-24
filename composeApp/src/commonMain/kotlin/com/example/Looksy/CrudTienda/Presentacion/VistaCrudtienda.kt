@@ -153,7 +153,7 @@ fun CardProducto(producto: ProductoTienda, colorBoton: Color, navController: Nav
                 contentPadding = PaddingValues(0.dp),
                 shape = RoundedCornerShape(4.dp)
             ) {
-                Text("Eliminar", fontSize = 10.sp, color = Color.White)
+                Text("Borrar", fontSize = 10.sp, color = Color.White)
             }
         }
     }
