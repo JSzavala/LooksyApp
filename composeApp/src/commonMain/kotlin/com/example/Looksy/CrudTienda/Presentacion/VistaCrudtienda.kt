@@ -111,6 +111,7 @@ fun CardProducto(producto: ProductoTienda, colorBoton: Color) {
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(8.dp)
     ) {
+
             Box(
             modifier = Modifier
                 .fillMaxWidth()
