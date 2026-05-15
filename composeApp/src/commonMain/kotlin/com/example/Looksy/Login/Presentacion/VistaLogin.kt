@@ -15,7 +15,12 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.input.VisualTransformation
-
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun VistaLogin(
@@ -26,10 +31,18 @@ fun VistaLogin(
     var contrasena by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     var mostrarContrasena by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                    }
+                )
+            }
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -114,7 +127,16 @@ fun VistaLogin(
         Spacer(modifier = Modifier.height(16.dp)) // espacio
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "¿No tienes cuenta? ", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = "Si aún no tienes cuenta puedes registrate aquí ",
+                modifier = Modifier.clickable { onCreateAccount() },
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Regístrate",
                 modifier = Modifier.clickable { onCreateAccount() },
