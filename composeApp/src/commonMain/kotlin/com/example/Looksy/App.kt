@@ -21,7 +21,6 @@ import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.VistaCrudtienda
 import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Login.Presentacion.VistaLogin
-import com.example.Looksy.Perfil.Presentacion.VistaPerfil
 import com.example.Looksy.SeleccionTipoCuenta.Presentacion.VistaSeleccionTipoCuenta
 import com.example.Looksy.SubirProducto.Funcionalidad_subirProducto
 import com.example.Looksy.SubirProducto.VistaAgregarProducto

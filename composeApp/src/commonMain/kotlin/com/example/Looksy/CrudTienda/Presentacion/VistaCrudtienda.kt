@@ -119,7 +119,9 @@ fun VistaCrudtienda(navController: NavHostController) {
 
                     //Falta mandar este a pantalla de ajustes
                     Button(
-                        onClick = {},
+                        onClick = {
+                            navController.navigate("ajustes")
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFF0F0F0),
