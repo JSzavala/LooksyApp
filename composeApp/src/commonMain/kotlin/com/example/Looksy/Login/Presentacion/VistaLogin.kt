@@ -124,7 +124,7 @@ fun VistaLogin(
             Text("Iniciar Sesión")
         }
 
-        Spacer(modifier = Modifier.height(16.dp)) // espacio
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
