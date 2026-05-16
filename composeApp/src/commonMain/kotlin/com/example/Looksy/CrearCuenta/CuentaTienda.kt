@@ -1,6 +1,7 @@
 package com.example.Looksy.CrearCuenta
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,14 +21,24 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.text.KeyboardActions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuentaTienda(
     onVolver: () -> Unit,
+    onIrLogin: () -> Unit,
     onGuardar: () -> Unit = {}
 ) {
-    var usuario by remember { mutableStateOf("") }
+    val nombreFocus = remember { FocusRequester() }
+    val contrasenaFocus = remember { FocusRequester() }
+    val correoFocus = remember { FocusRequester() }
+    val direccionFocus = remember { FocusRequester() }
+
     var contrasena by remember { mutableStateOf("") }
     var mostrarContrasena by remember { mutableStateOf(false) }
     var nombreTienda by remember { mutableStateOf("") }
@@ -35,7 +46,9 @@ fun CuentaTienda(
     var direccion by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
 
-    var rol by remember { mutableStateOf("proveedor") }
+    var rol by remember { mutableStateOf("tienda") }
+    val focusManager = LocalFocusManager.current
+    var mostrarDialogoExito by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -52,6 +65,13 @@ fun CuentaTienda(
     Column(
         modifier = Modifier.fillMaxSize()
             .padding(paddingValues)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                    }
+                )
+            }
             .padding(horizontal = 24.dp)
             .verticalScroll(rememberScrollState()), // Para evitar que el teclado tape los campos
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,11 +92,16 @@ fun CuentaTienda(
         )
 
         CustomTextField(
-            value = usuario,
-            onValueChange = { usuario = it
-                              error = null},
-            label = "Nombre de Usuario",
-            icon = Icons.Default.Person
+            value = nombreTienda,
+            onValueChange = {
+                nombreTienda = it
+                error = null
+            },
+            label = "Nombre de la Tienda",
+            icon = Icons.Default.Business,
+            focusRequester = nombreFocus,
+            nextFocusRequester = contrasenaFocus,
+            focusManager = focusManager
         )
 
         OutlinedTextField(
@@ -93,26 +118,32 @@ fun CuentaTienda(
                 }
             },
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-        )
-
-        CustomTextField(
-            value = correo,
-            onValueChange = { correo = it
-                              error = null},
-            label = "Correo electrónico",
-            icon = Icons.Default.Email,
-            keyboardType = KeyboardType.Email
+            keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    correoFocus.requestFocus()
+                }
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+                .focusRequester(contrasenaFocus)
         )
 
         Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 0.5.dp)
 
         CustomTextField(
-            value = nombreTienda,
-            onValueChange = { nombreTienda = it
-                              error = null},
-            label = "Nombre de la Tienda",
-            icon = Icons.Default.Business
+            value = correo,
+            onValueChange = { correo = it
+                error = null},
+            label = "Correo electrónico",
+            icon = Icons.Default.Email,
+            keyboardType = KeyboardType.Email ,
+            focusRequester = correoFocus,
+            nextFocusRequester = direccionFocus,
+            focusManager = focusManager
         )
 
         CustomTextField(
@@ -120,7 +151,9 @@ fun CuentaTienda(
             onValueChange = { direccion = it
                               error = null},
             label = "Dirección física",
-            icon = Icons.Default.LocationOn
+            icon = Icons.Default.LocationOn,
+            focusRequester = direccionFocus,
+            focusManager = focusManager
         )
 
         if (error != null) {
@@ -134,6 +167,26 @@ fun CuentaTienda(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (mostrarDialogoExito) {
+            AlertDialog(onDismissRequest = {},
+                title = {
+                    Text("Registro exitoso")
+                },
+                text = {
+                    Text("La tienda se registró correctamente.")
+                },
+                confirmButton = {
+                    Button(onClick = {
+                            mostrarDialogoExito = false
+                            onIrLogin()
+                        }
+                    ) {
+                        Text("Aceptar")
+                    }
+                }
+            )
+        }
+
         Button(
             onClick = {
                 if (nombreTienda.isEmpty() || correo.isEmpty() || contrasena.isEmpty()) {
@@ -143,7 +196,7 @@ fun CuentaTienda(
                 } else {
                     error = null
                     onGuardar()
-                    onVolver()
+                    mostrarDialogoExito = true
                 }
             },
             modifier = Modifier
@@ -166,7 +219,10 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     label: String,
     icon: ImageVector,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    focusRequester: FocusRequester,
+    nextFocusRequester: FocusRequester? = null,
+    focusManager: androidx.compose.ui.focus.FocusManager
 ) {
     OutlinedTextField(
         value = value,
@@ -174,10 +230,29 @@ fun CustomTextField(
         label = { Text(label) },
         leadingIcon = { Icon(icon, contentDescription = null) },
         shape = RoundedCornerShape(16.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = if (nextFocusRequester != null)
+                ImeAction.Next
+            else
+                ImeAction.Done
+        ),
+
+        keyboardActions = KeyboardActions(
+            onNext = {
+                nextFocusRequester?.requestFocus()
+            },
+            onDone = {
+                focusManager.clearFocus()
+            }
+        ),
+
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 12.dp),
+            .padding(bottom = 12.dp)
+            .focusRequester(focusRequester),
+
         singleLine = true
     )
 }

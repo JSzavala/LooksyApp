@@ -17,13 +17,22 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun VistaLogin(
     onLoginSuccess: () -> Unit,
     onCreateAccount: () -> Unit
 ) {
+    val usuarioFocus = remember { FocusRequester() }
+    val contrasenaFocus = remember { FocusRequester() }
+
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -60,8 +69,17 @@ fun VistaLogin(
                 error = null
             },
             label = { Text("Usuario") },
-            shape = RoundedCornerShape(16.dp), // Bordes redondeados
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { contrasenaFocus.requestFocus() }
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .focusRequester(usuarioFocus),
+
             singleLine = true
         )
 
@@ -73,23 +91,34 @@ fun VistaLogin(
             },
             label = { Text("Contraseña") },
             shape = RoundedCornerShape(16.dp),
-            visualTransformation = if (mostrarContrasena)
-                VisualTransformation.None
-            else
-                PasswordVisualTransformation(),
-            trailingIcon = {
-                val icon = if (mostrarContrasena)
-                    Icons.Default.Visibility
+            visualTransformation =
+                if (mostrarContrasena)
+                    VisualTransformation.None
                 else
-                    Icons.Default.VisibilityOff
-
-                IconButton(onClick = {
-                    mostrarContrasena = !mostrarContrasena
-                }) {
-                    Icon(imageVector = icon, contentDescription = "Mostrar contraseña")
+                    PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
+            trailingIcon = {
+                val icon =
+                    if (mostrarContrasena)
+                        Icons.Default.Visibility
+                    else
+                        Icons.Default.VisibilityOff
+                IconButton(
+                    onClick = { mostrarContrasena = !mostrarContrasena }
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Mostrar contraseña"
+                    )
                 }
             },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+                .focusRequester(contrasenaFocus),
             singleLine = true
         )
 

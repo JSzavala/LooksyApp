@@ -1,6 +1,7 @@
 package com.example.Looksy.CrearCuenta
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,19 +22,34 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.text.KeyboardActions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuentaComprador(
     onVolver: () -> Unit,
+    onIrLogin: () -> Unit,
     onGuardar: () -> Unit = {}
 ) {
+    val usuarioFocus = remember { FocusRequester() }
+    val contrasenaFocus = remember { FocusRequester() }
+    val nombreFocus = remember { FocusRequester() }
+    val apellidoPFocus = remember { FocusRequester() }
+    val apellidoMFocus = remember { FocusRequester() }
+    val correoFocus = remember { FocusRequester() }
+    val direccionFocus = remember { FocusRequester() }
+
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var mostrarContrasena by remember { mutableStateOf(false) }
@@ -48,6 +64,8 @@ fun CuentaComprador(
     var error by remember { mutableStateOf<String?>(null) }
 
     var rol by remember { mutableStateOf("cliente") }
+    val focusManager = LocalFocusManager.current
+    var mostrarDialogoExito by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -66,6 +84,13 @@ fun CuentaComprador(
             .fillMaxSize()
             .padding(paddingValues)
             .padding(horizontal = 24.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus()
+                    }
+                )
+            }
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -86,10 +111,15 @@ fun CuentaComprador(
 
         CustomTextField(
             value = usuario,
-            onValueChange = { usuario = it
-                              error = null},
+            onValueChange = {
+                usuario = it
+                error = null
+            },
             label = "Nombre de Usuario",
-            icon = Icons.Default.AlternateEmail
+            icon = Icons.Default.AlternateEmail,
+            focusRequester = usuarioFocus,
+            nextFocusRequester = contrasenaFocus,
+            focusManager = focusManager
         )
 
         OutlinedTextField(
@@ -115,7 +145,16 @@ fun CuentaComprador(
                 }
             },
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+            keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                    onNext = { nombreFocus.requestFocus() }
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+                .focusRequester(contrasenaFocus)
         )
 
         Divider(modifier = Modifier.padding(vertical = 16.dp), thickness = 0.5.dp)
@@ -125,7 +164,10 @@ fun CuentaComprador(
             onValueChange = { nombre = it
                               error = null},
             label = "Nombre(s)",
-            icon = Icons.Default.Person
+            icon = Icons.Default.Person,
+            focusRequester = nombreFocus,
+            nextFocusRequester = apellidoPFocus,
+            focusManager = focusManager
         )
 
         CustomTextField(
@@ -133,7 +175,10 @@ fun CuentaComprador(
             onValueChange = { apellidoP = it
                               error = null},
             label = "Apellido Paterno",
-            icon = Icons.Default.Badge
+            icon = Icons.Default.Badge,
+            focusRequester = apellidoPFocus,
+            nextFocusRequester = apellidoMFocus,
+            focusManager = focusManager
         )
 
         CustomTextField(
@@ -141,7 +186,10 @@ fun CuentaComprador(
             onValueChange = { apellidoM = it
                               error = null},
             label = "Apellido Materno",
-            icon = Icons.Default.Badge
+            icon = Icons.Default.Badge,
+            focusRequester = apellidoMFocus,
+            nextFocusRequester = correoFocus,
+            focusManager = focusManager
         )
 
         CustomTextField(
@@ -150,7 +198,10 @@ fun CuentaComprador(
                               error = null},
             label = "Correo electrónico",
             icon = Icons.Default.Email,
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            focusRequester = correoFocus,
+            nextFocusRequester = direccionFocus,
+            focusManager = focusManager
         )
 
         CustomTextField(
@@ -158,7 +209,9 @@ fun CuentaComprador(
             onValueChange = { direccion = it
                               error = null},
             label = "Dirección",
-            icon = Icons.Default.Home
+            icon = Icons.Default.Home,
+            focusRequester = direccionFocus,
+            focusManager = focusManager
         )
 
         if (error != null) {
@@ -172,6 +225,26 @@ fun CuentaComprador(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (mostrarDialogoExito) {
+            AlertDialog(onDismissRequest = {},
+                title = {
+                    Text("Registro exitoso")
+                },
+                text = {
+                    Text("El usuario se registró correctamente.")
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        mostrarDialogoExito = false
+                        onIrLogin()
+                    }
+                    ) {
+                        Text("Aceptar")
+                    }
+                }
+            )
+        }
+
         Button(
             onClick = {
                 if (usuario.isEmpty() || nombre.isEmpty() || apellidoP.isEmpty() ||
@@ -182,7 +255,7 @@ fun CuentaComprador(
                 } else {
                     error = null
                     onGuardar()
-                    onVolver()
+                    mostrarDialogoExito = true
                 }
             },
             modifier = Modifier

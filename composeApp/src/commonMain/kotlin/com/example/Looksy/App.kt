@@ -40,13 +40,27 @@ fun App() {
         when {
             pantallaRegistro == "tienda" -> {
                 CuentaTienda(
-                    onVolver = { pantallaRegistro = null }
+                    onVolver = {
+                        pantallaRegistro = null
+                    },
+
+                    onIrLogin = {
+                        pantallaRegistro = null
+                        mostrarSeleccionCuenta = false
+                    }
                 )
             }
 
             pantallaRegistro == "comprador" -> {
                 CuentaComprador(
-                    onVolver = { pantallaRegistro = null }
+                    onVolver = {
+                        pantallaRegistro = null
+                    },
+
+                    onIrLogin = {
+                        pantallaRegistro = null
+                        mostrarSeleccionCuenta = false
+                    }
                 )
             }
 
