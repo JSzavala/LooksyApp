@@ -21,12 +21,17 @@ import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.Datos.ProductoTienda
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
 import androidx.compose.material.icons.filled.Search
+import com.example.Looksy.Ajustes.Presentacion.ModeloAjustes
 
 
 @Composable
-fun VistaCrudtienda(navController: NavHostController) {
+fun VistaCrudtienda(
+    navController: NavHostController,
+    viewModelAjustes: ModeloAjustes // Añadido para reflejar cambios de ajustes
+) {
 
     val listaProductos by ProductoRepository.productos.collectAsState()
+    val stateAjustes = viewModelAjustes.state // Obtenemos el estado de ajustes
     val verdeLooksy = MaterialTheme.colorScheme.primary
     var textoBusqueda by remember { mutableStateOf("") }
 
@@ -105,19 +110,18 @@ fun VistaCrudtienda(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        "Nombre tienda",
+                        stateAjustes.nombreTienda.ifBlank { "Mi Tienda" }, // Refleja el cambio de nombre
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
 
                     Text(
-                        "Descripción",
+                        stateAjustes.descripcion.ifBlank { "Descripción de la tienda" }, // Refleja el cambio de descripción
                         fontSize = 14.sp
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    //Falta mandar este a pantalla de ajustes
                     Button(
                         onClick = {
                             navController.navigate("ajustes")
@@ -129,11 +133,11 @@ fun VistaCrudtienda(navController: NavHostController) {
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Editar perfil")
+                        Text("Configuración")
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Divider()
+                    HorizontalDivider()
                 }
             }
 

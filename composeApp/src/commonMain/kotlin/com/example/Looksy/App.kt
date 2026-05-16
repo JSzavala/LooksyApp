@@ -5,44 +5,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.Looksy.Ajustes.Presentacion.ModeloAjustes
+import com.example.Looksy.Ajustes.Presentacion.VistaAjustes
+import com.example.Looksy.Ajustes.Presentacion.VistaEditarPerfil
+import com.example.Looksy.Ajustes.Presentacion.VistaCambiarContrasena
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.CrearCuenta.CuentaComprador
 import com.example.Looksy.CrearCuenta.CuentaTienda
 import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.VistaCrudtienda
-import com.example.Looksy.ListadoImagenes.Presentacion.VistaListadoImagenes
 import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.SeleccionTipoCuenta.Presentacion.VistaSeleccionTipoCuenta
 import com.example.Looksy.SubirProducto.Funcionalidad_subirProducto
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
-import com.example.Looksy.VistaProducto.Presentacion.VistaListadoProductos
 
 @Composable
 fun App() {
     MaterialTheme {
-        //Para saltar el login durante las pruebas
-        val saltarLoginParaPruebas = false
-        var estaLogueado by remember { mutableStateOf(saltarLoginParaPruebas) }
+        var estaLogueado by remember { mutableStateOf(false) }
         var mostrarSeleccionCuenta by remember { mutableStateOf(false) }
         var pantallaRegistro by remember { mutableStateOf<String?>(null) }
 
-//        MainContent()
         when {
             pantallaRegistro == "tienda" -> {
                 CuentaTienda(
-                    onVolver = {
-                        pantallaRegistro = null
-                    },
-
+                    onVolver = { pantallaRegistro = null },
                     onIrLogin = {
                         pantallaRegistro = null
                         mostrarSeleccionCuenta = false
@@ -52,10 +46,7 @@ fun App() {
 
             pantallaRegistro == "comprador" -> {
                 CuentaComprador(
-                    onVolver = {
-                        pantallaRegistro = null
-                    },
-
+                    onVolver = { pantallaRegistro = null },
                     onIrLogin = {
                         pantallaRegistro = null
                         mostrarSeleccionCuenta = false
@@ -65,9 +56,7 @@ fun App() {
 
             mostrarSeleccionCuenta -> {
                 VistaSeleccionTipoCuenta(
-                    onSeleccionar = { tipo ->
-                        pantallaRegistro = tipo   //aquí decide a dónde ir
-                    },
+                    onSeleccionar = { tipo -> pantallaRegistro = tipo },
                     onVolver = { mostrarSeleccionCuenta = false }
                 )
             }
@@ -89,6 +78,9 @@ fun App() {
 @Composable
 fun MainContent() {
     val navController = rememberNavController()
+    // Inicialización del ViewModel compartido para que los datos persistan en la sesión
+    val viewModelAjustes = remember { ModeloAjustes() }
+
     Scaffold(
         bottomBar = {
             VistaBarraInferior(
@@ -106,13 +98,8 @@ fun MainContent() {
                 navController = navController,
                 startDestination = "perfil"
             ) {
-                /*composable("buscar") {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Pantalla de Búsqueda")
-                    }
-                }*/
                 composable("perfil") {
-                    VistaCrudtienda(navController)
+                    VistaCrudtienda(navController, viewModelAjustes)
                 }
                 composable(
                     route = "agregar?productoId={productoId}",
@@ -127,6 +114,7 @@ fun MainContent() {
                     val productoIdStr = backStackEntry.arguments?.getString("productoId")
                     val productoId = productoIdStr?.toIntOrNull()
                     val viewModel = remember { Funcionalidad_subirProducto() }
+                    
                     LaunchedEffect(productoId) {
                         if (productoId != null) {
                             ProductoRepository.obtenerProductoPorId(productoId)?.let {
@@ -134,6 +122,7 @@ fun MainContent() {
                             }
                         }
                     }
+                    
                     VistaAgregarProducto(
                         viewModel = viewModel,
                         navController = navController,
@@ -141,11 +130,25 @@ fun MainContent() {
                     )
                 }
                 composable("ajustes") {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Pantalla de Ajustes")
-                    }
+                    VistaAjustes(
+                        viewModel = viewModelAjustes,
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToEditarPerfil = { navController.navigate("editarPerfil") },
+                        onNavigateToCambiarContrasena = { navController.navigate("cambiarContrasena") }
+                    )
                 }
-
+                composable("editarPerfil") {
+                    VistaEditarPerfil(
+                        viewModel = viewModelAjustes,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+                composable("cambiarContrasena") {
+                    VistaCambiarContrasena(
+                        viewModel = viewModelAjustes,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }
