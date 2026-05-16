@@ -20,141 +20,268 @@ import androidx.navigation.NavHostController
 import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.Datos.ProductoTienda
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
+import androidx.compose.material.icons.filled.Search
 
 
 @Composable
 fun VistaCrudtienda(navController: NavHostController) {
+
     val listaProductos by ProductoRepository.productos.collectAsState()
-    //var listaProductos by remember { mutableStateOf(listOf<ProductoTienda>()) }
     val verdeLooksy = MaterialTheme.colorScheme.primary
+    var textoBusqueda by remember { mutableStateOf("") }
+
+    val productosFiltrados = listaProductos.filter {
+        it.nombre.contains(textoBusqueda, ignoreCase = true)
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFFF7F7F7))
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text(
-                "MIS PRODUCTOS:",
-                color = Color.Black,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 20.dp).align(Alignment.CenterHorizontally)
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            // Header tipo perfil
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Surface(
+                            shape = CircleShape,
+                            border = BorderStroke(
+                                2.dp,
+                                color = Color.Black
+                            ),
+                            modifier = Modifier.size(70.dp),
+                            color = Color.LightGray
+                        ) {}
+
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "${listaProductos.size}",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                            Text("publicaciones", fontSize = 12.sp)
+                        }
+
+                        Spacer(modifier = Modifier.width(30.dp))
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "121",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                            Text("seguidores", fontSize = 12.sp)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        "Nombre tienda",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+
+                    Text(
+                        "Descripción",
+                        fontSize = 14.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    //Falta mandar este a pantalla de ajustes
+                    Button(
+                        onClick = {},
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF0F0F0),
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Editar perfil")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider()
+                }
+            }
+
+            OutlinedTextField(
+                value = textoBusqueda,
+                onValueChange = {
+                    textoBusqueda = it
+                },
+                label = {
+                    Text("Buscar producto")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+
+                shape = RoundedCornerShape(16.dp),
+
+                singleLine = true,
+                leadingIcon = {
+                    Icon(Icons.Default.Search, null)
+                }
             )
 
-            if (listaProductos.isEmpty()) {
-                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Surface(
-                            onClick ={
-                                navController.navigate("agregar");
-                                /*listaProductos = listaProductos + ProductoTienda(
-                                    listaProductos.size,
-                                    "Producto Nuevo",
-                                    "$0.00",
-                                    Color.LightGray
-                                )*/
-                            },
-                            modifier = Modifier.size(160.dp),
-                            shape = CircleShape,
-                            color = verdeLooksy
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier.padding(40.dp),
-                                tint = Color.White
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            "Publicar productos",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                    }
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.weight(1f)
+            if (
+                productosFiltrados.isEmpty()
+                && textoBusqueda.isNotBlank()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    items(listaProductos) { producto ->
-                        CardProducto( producto, verdeLooksy,navController)
-                    }
+                    Text("No se encontraron productos")
+                }
+            }
+            // Grid de productos
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(700.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(productosFiltrados) { producto ->
+                    CardProducto(
+                        producto,
+                        verdeLooksy,
+                        navController
+                    )
                 }
             }
         }
 
-        if (listaProductos.isNotEmpty()) {
-            FloatingActionButton(
-                onClick = { navController.navigate("agregar");
-                    /*listaProductos = listaProductos + ProductoTienda(
-                        listaProductos.size,
-                        "Nuevo Item",
-                        "$0.00",
-                        Color.Gray
-                    )*/
-                },
-                containerColor = verdeLooksy,
-                contentColor = Color.White,
-                shape = CircleShape,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(24.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Añadir")
-            }
+        FloatingActionButton(
+            onClick = {
+                navController.navigate("agregar")
+            },
+            containerColor = verdeLooksy,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp)
+        ) {
+            Icon(Icons.Default.Add, null)
         }
     }
 }
 
 @Composable
-fun CardProducto(producto: ProductoTienda, colorBoton: Color, navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .padding(8.dp)
+fun CardProducto(
+    producto: ProductoTienda,
+    colorBoton: Color,
+    navController: NavHostController
+) {
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
 
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+
             Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp)
-                .background(producto.colorPlaceholder, RoundedCornerShape(4.dp))
-        )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(
+                        producto.colorPlaceholder,
+                        RoundedCornerShape(12.dp)
+                    )
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(producto.nombre, color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-        Text(producto.precio, color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                producto.nombre,
+                fontWeight = FontWeight.Bold
+            )
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Button(
-                onClick = {
-                    navController.navigate("agregar?productoId=${producto.id}")
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = colorBoton),
-                modifier = Modifier.weight(1f).height(32.dp),
-                contentPadding = PaddingValues(0.dp),
-                shape = RoundedCornerShape(4.dp)
+            Text(
+                producto.precio,
+                color = Color(0xFF00A86B),
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Modificar  ", fontSize = 10.sp, color = Color.White)
-            }
 
-            Button(
-                onClick = {
-                    ProductoRepository.eliminarProducto(producto.id)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = colorBoton),
-                modifier = Modifier.weight(1f).height(32.dp),
-                contentPadding = PaddingValues(0.dp),
-                shape = RoundedCornerShape(4.dp)
-            ) {
-                Text("Eliminar", fontSize = 10.sp, color = Color.White)
+                Button(
+                    onClick = {
+                        navController.navigate(
+                            "agregar?productoId=${producto.id}"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorBoton
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+
+                ) {
+                    Text(
+                        "Modificar",
+                        fontSize = 11.sp
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        ProductoRepository.eliminarProducto(producto.id)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorBoton
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        "Eliminar",
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
     }

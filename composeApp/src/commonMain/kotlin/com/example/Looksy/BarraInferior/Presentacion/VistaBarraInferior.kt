@@ -1,5 +1,7 @@
 package com.example.Looksy.BarraInferior.Presentacion
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,32 +13,35 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.Looksy.BarraInferior.Dominio.ItemsNavegacion
 
 @Composable
-fun VistaBarraInferior(navController: NavController) {
+fun VistaBarraInferior(
+    navController: NavController,
+    esTienda: Boolean
+) {
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar {
         ItemsNavegacion.items.forEach { item ->
-            val isSelected = currentRoute == item.route
+
+            // Ocultar inicio si es tienda
+            if (esTienda && item.route == "inicio") {
+                return@forEach
+            }
+
             NavigationBarItem(
-                selected = isSelected,
+                selected = currentRoute == item.route,
                 onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    navController.navigate(item.route)
                 },
-                label = { Text(text = item.title) },
                 icon = {
                     Icon(
-                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                        imageVector = item.selectedIcon,
                         contentDescription = item.title
                     )
+                },
+                label = {
+                    Text(item.title)
                 }
             )
         }

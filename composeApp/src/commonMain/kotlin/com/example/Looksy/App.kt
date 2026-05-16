@@ -92,7 +92,10 @@ fun MainContent() {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            VistaBarraInferior(navController = navController)
+            VistaBarraInferior(
+                navController = navController,
+                esTienda = true
+            )
         }
     ) { paddingValues ->
         Box(
@@ -102,16 +105,13 @@ fun MainContent() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = "inicio"
+                startDestination = "perfil"
             ) {
-                composable("inicio") {
-                    VistaListadoImagenes()
-                }
-                composable("buscar") {
+                /*composable("buscar") {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("Pantalla de Búsqueda")
                     }
-                }
+                }*/
                 composable("perfil") {
                     VistaCrudtienda(navController)
                 }
