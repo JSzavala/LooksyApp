@@ -84,7 +84,8 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                     Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             OutlinedTextField(
                 value = viewModel.stockPrenda,
