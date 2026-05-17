@@ -45,10 +45,14 @@ fun VistaAgregarProducto(
     val scrollState = rememberScrollState()
     val tallas = listOf("CH", "M", "G", "XL")
     
-    // Validación para habilitar el botón de publicar: ningún campo vacío y tallas seleccionadas
+    // Validaciones numéricas
+    val precioValue = viewModel.precioPrenda.toDoubleOrNull()
+    val stockValue = viewModel.stockPrenda.toIntOrNull()
+    
+    // Validación para habilitar el botón de publicar
     val esValido = viewModel.nombrePrenda.isNotBlank() &&
-                   viewModel.precioPrenda.isNotBlank() &&
-                   viewModel.stockPrenda.isNotBlank() &&
+                   precioValue != null && precioValue >= 1.0 && precioValue <= 5000.0 &&
+                   stockValue != null && stockValue >= 1 && stockValue <= 300 &&
                    viewModel.descripcionPrenda.isNotBlank() &&
                    viewModel.tallasSeleccionadas.isNotEmpty()
 
@@ -87,38 +91,56 @@ fun VistaAgregarProducto(
                 supportingText = {
                     Text(text = "${viewModel.nombrePrenda.length}/50")
                 },
-                singleLine = true
+                singleLine = true,
+                isError = viewModel.nombrePrenda.isBlank() && viewModel.nombrePrenda.isNotEmpty()
             )
 
             OutlinedTextField(
                 value = viewModel.precioPrenda,
                 onValueChange = { input ->
-                    // Permite números y hasta dos decimales usando Regex
                     if (input.isEmpty() || input.matches(Regex("""^\d*\.?\d{0,2}$"""))) {
+                        // Opcional: restringir entrada inmediata si supera 5000? 
+                        // Mejor dejar que el usuario escriba y validar con esValido/isError
                         viewModel.precioPrenda = input
                     }
                 },
-                label = { Text("Precio") },
+                label = { Text("Precio (Máx. 5000)") },
                 leadingIcon = {
                     Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                singleLine = true
+                singleLine = true,
+                supportingText = {
+                    if (precioValue != null && (precioValue < 1.0 || precioValue > 5000.0)) {
+                        Text("El precio debe estar entre 1 y 5000", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                isError = precioValue == null && viewModel.precioPrenda.isNotEmpty() || (precioValue != null && (precioValue < 1.0 || precioValue > 5000.0))
             )
             
             OutlinedTextField(
                 value = viewModel.stockPrenda,
-                onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.stockPrenda = it },
-                label = { Text("Stock") },
+                onValueChange = { input ->
+                    if (input.all { char -> char.isDigit() }) {
+                        viewModel.stockPrenda = input
+                    }
+                },
+                label = { Text("Stock (Máx. 300)") },
                 leadingIcon = {
                     Icon(Icons.Default.Inventory, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true
+                singleLine = true,
+                supportingText = {
+                    if (stockValue != null && (stockValue < 1 || stockValue > 300)) {
+                        Text("El stock debe estar entre 1 y 300", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                isError = stockValue == null && viewModel.stockPrenda.isNotEmpty() || (stockValue != null && (stockValue < 1 || stockValue > 300))
             )
             
             Column {
@@ -160,7 +182,8 @@ fun VistaAgregarProducto(
                 shape = RoundedCornerShape(12.dp),
                 supportingText = {
                     Text(text = "${viewModel.descripcionPrenda.length}/80")
-                }
+                },
+                isError = viewModel.descripcionPrenda.isBlank() && viewModel.descripcionPrenda.isNotEmpty()
             )
 
             Box(
@@ -198,10 +221,12 @@ fun VistaAgregarProducto(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun VistaPreviaAgregar() {
     val viewModelFalso = Funcionalidad_subirProducto()
+
     MaterialTheme { 
         VistaAgregarProducto(
             viewModel = viewModelFalso,
