@@ -16,6 +16,7 @@ import com.example.Looksy.Ajustes.Presentacion.ModeloAjustes
 import com.example.Looksy.Ajustes.Presentacion.VistaAjustes
 import com.example.Looksy.Ajustes.Presentacion.VistaEditarPerfil
 import com.example.Looksy.Ajustes.Presentacion.VistaCambiarContrasena
+import com.example.Looksy.Ajustes.Presentacion.VistaDireccionDespacho
 import com.example.Looksy.BarraInferior.Presentacion.VistaBarraInferior
 import com.example.Looksy.CrearCuenta.CuentaComprador
 import com.example.Looksy.CrearCuenta.CuentaTienda
@@ -150,7 +151,8 @@ fun MainContent() {
                         viewModel = viewModelAjustes,
                         onNavigateBack = { navController.popBackStack() },
                         onNavigateToEditarPerfil = { navController.navigate("editarPerfil") },
-                        onNavigateToCambiarContrasena = { navController.navigate("cambiarContrasena") }
+                        onNavigateToCambiarContrasena = { navController.navigate("cambiarContrasena") },
+                        onNavigateToDireccionDespacho = { navController.navigate("direccionDespacho") }
                     )
                 }
                 composable("editarPerfil") {
@@ -161,6 +163,12 @@ fun MainContent() {
                 }
                 composable("cambiarContrasena") {
                     VistaCambiarContrasena(
+                        viewModel = viewModelAjustes,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+                composable("direccionDespacho") {
+                    VistaDireccionDespacho(
                         viewModel = viewModelAjustes,
                         onNavigateBack = { navController.popBackStack() }
                     )

@@ -2,7 +2,7 @@ package com.example.Looksy.Ajustes.Presentacion
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -20,13 +20,15 @@ fun VistaEditarPerfil(
     var correo by remember { mutableStateOf(state.correoAdmin) }
     var descripcion by remember { mutableStateOf(state.descripcion) }
 
+    val esValido = nombre.isNotBlank() && correo.isNotBlank() && descripcion.isNotBlank()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Editar Perfil", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Regresar")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Regresar")
                     }
                 }
             )
@@ -43,33 +45,53 @@ fun VistaEditarPerfil(
                 value = nombre,
                 onValueChange = { nombre = it },
                 label = { Text("Nombre de la Tienda") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
             )
+            
             OutlinedTextField(
                 value = descripcion,
-                onValueChange = { descripcion = it },
-                label = { Text("Descripcion de la Tienda") },
-                modifier = Modifier.fillMaxWidth()
+                onValueChange = { if (it.length <= 100) descripcion = it },
+                label = { Text("Descripción de la Tienda") },
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text(
+                        text = "${descripcion.length}/100",
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             )
 
             OutlinedTextField(
                 value = correo,
                 onValueChange = { correo = it },
                 label = { Text("Correo del Administrador") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
             )
 
             Button(
                 onClick = {
-                    viewModel.actualizarNombreTienda(nombre)
-                    viewModel.actualizarCorreoAdmin(correo)
-                    viewModel.actualizarDescripcion(descripcion)
-                    // Aquí podrías agregar una función en el ViewModel para el correo si fuera necesario
-                    onNavigateBack()
+                    if (esValido) {
+                        viewModel.actualizarNombreTienda(nombre)
+                        viewModel.actualizarCorreoAdmin(correo)
+                        viewModel.actualizarDescripcion(descripcion)
+                        onNavigateBack()
+                    }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = esValido
             ) {
                 Text("Guardar Cambios")
+            }
+            
+            if (!esValido) {
+                Text(
+                    text = "* Todos los campos son obligatorios",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }

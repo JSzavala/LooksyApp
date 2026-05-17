@@ -20,6 +20,11 @@ fun VistaCambiarContrasena(
     var confirmarContrasena by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
 
+    val esValido = nuevaContrasena.isNotBlank() && 
+                   confirmarContrasena.isNotBlank() && 
+                   nuevaContrasena.length <= 10 && 
+                   confirmarContrasena.length <= 10
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,23 +47,35 @@ fun VistaCambiarContrasena(
             OutlinedTextField(
                 value = nuevaContrasena,
                 onValueChange = { 
-                    nuevaContrasena = it
-                    error = null
+                    if (it.length <= 10) {
+                        nuevaContrasena = it
+                        error = null
+                    }
                 },
                 label = { Text("Nueva Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text("${nuevaContrasena.length}/10")
+                },
+                isError = nuevaContrasena.length > 10
             )
 
             OutlinedTextField(
                 value = confirmarContrasena,
                 onValueChange = { 
-                    confirmarContrasena = it
-                    error = null
+                    if (it.length <= 10) {
+                        confirmarContrasena = it
+                        error = null
+                    }
                 },
                 label = { Text("Confirmar Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text("${confirmarContrasena.length}/10")
+                },
+                isError = confirmarContrasena.length > 10
             )
 
             if (error != null) {
@@ -67,16 +84,15 @@ fun VistaCambiarContrasena(
 
             Button(
                 onClick = {
-                    if (nuevaContrasena.isEmpty()) {
-                        error = "La contraseña no puede estar vacía"
-                    } else if (nuevaContrasena == confirmarContrasena) {
+                    if (nuevaContrasena == confirmarContrasena) {
                         viewModel.actualizarContraseña(nuevaContrasena)
                         onNavigateBack()
                     } else {
                         error = "Las contraseñas no coinciden"
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = esValido
             ) {
                 Text("Actualizar Contraseña")
             }

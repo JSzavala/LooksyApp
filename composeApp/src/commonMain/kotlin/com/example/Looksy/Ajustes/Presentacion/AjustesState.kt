@@ -9,6 +9,7 @@ data class AjustesState(
     val modoOscuroEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val mensajeError: String? = null,
-    val contrasena: String,
-    val descripcion: String
+    val contrasena: String = "",
+    val descripcion: String = "",
+    val direccionDespacho: String = "No configurada"
 )

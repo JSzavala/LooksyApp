@@ -37,11 +37,21 @@ import androidx.compose.material.icons.filled.Description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto(),
+fun VistaAgregarProducto( 
+    viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto(),
     onVolver: () -> Unit,
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     val scrollState = rememberScrollState()
     val tallas = listOf("CH", "M", "G", "XL")
+    
+    // Validación para habilitar el botón de publicar: ningún campo vacío y tallas seleccionadas
+    val esValido = viewModel.nombrePrenda.isNotBlank() &&
+                   viewModel.precioPrenda.isNotBlank() &&
+                   viewModel.stockPrenda.isNotBlank() &&
+                   viewModel.descripcionPrenda.isNotBlank() &&
+                   viewModel.tallasSeleccionadas.isNotEmpty()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,26 +77,37 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
 
             OutlinedTextField(
                 value = viewModel.nombrePrenda,
-                onValueChange = { viewModel.nombrePrenda = it },
+                onValueChange = { if (it.length <= 50) viewModel.nombrePrenda = it },
                 label = { Text("Nombre de la prenda") },
                 leadingIcon = {
                     Icon(Icons.Default.Label, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                supportingText = {
+                    Text(text = "${viewModel.nombrePrenda.length}/50")
+                },
+                singleLine = true
             )
 
             OutlinedTextField(
                 value = viewModel.precioPrenda,
-                onValueChange = { viewModel.precioPrenda = it },
+                onValueChange = { input ->
+                    // Permite números y hasta dos decimales usando Regex
+                    if (input.isEmpty() || input.matches(Regex("""^\d*\.?\d{0,2}$"""))) {
+                        viewModel.precioPrenda = input
+                    }
+                },
                 label = { Text("Precio") },
                 leadingIcon = {
                     Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true
             )
+            
             OutlinedTextField(
                 value = viewModel.stockPrenda,
                 onValueChange = { if (it.all { char -> char.isDigit() }) viewModel.stockPrenda = it },
@@ -96,8 +117,10 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
             )
+            
             Column {
                 Text("Talla disponible:", style = MaterialTheme.typography.bodyLarge)
                 Row(
@@ -105,23 +128,20 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     tallas.forEach { talla ->
-                        // Comprobamos si la talla ya existe en la lista del ViewModel
                         val estaSeleccionada = viewModel.tallasSeleccionadas.contains(talla)
 
                         FilterChip(
                             selected = estaSeleccionada,
                             onClick = {
                                 if (estaSeleccionada) {
-                                    // Si ya estaba, la removemos (deseleccionar)
                                     viewModel.tallasSeleccionadas.remove(talla)
                                 } else {
-                                    // Si no estaba, la agregamos
                                     viewModel.tallasSeleccionadas.add(talla)
                                 }
                             },
                             label = { Text(talla) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF6750A4), //  verde 0xFF83B766
+                                selectedContainerColor = Color(0xFF6750A4),
                                 selectedLabelColor = Color.White
                             )
                         )
@@ -131,13 +151,16 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
 
             OutlinedTextField(
                 value = viewModel.descripcionPrenda,
-                onValueChange = { viewModel.descripcionPrenda = it },
+                onValueChange = { if (it.length <= 80) viewModel.descripcionPrenda = it },
                 label = { Text("Descripción de la prenda") },
                 leadingIcon = {
                     Icon(Icons.Default.Description, contentDescription = null, tint = Color(0xFF6750A4))
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                supportingText = {
+                    Text(text = "${viewModel.descripcionPrenda.length}/80")
+                }
             )
 
             Box(
@@ -160,9 +183,10 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
             }
 
             Button(
-                onClick = { viewModel.publicar(navController) },
+                onClick = { if (esValido) viewModel.publicar(navController) },
+                enabled = esValido,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6750A4),
+                    containerColor = if (esValido) Color(0xFF6750A4) else Color.Gray,
                     contentColor = Color.White
                 ),
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -174,23 +198,14 @@ fun VistaAgregarProducto( viewModel: Funcionalidad_subirProducto = Funcionalidad
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun VistaPreviaAgregar() {
-    // Usamos una instancia real del ViewModel para la previsualización
     val viewModelFalso = Funcionalidad_subirProducto()
-
-    // Para el NavController, en Preview podemos pasar uno dummy o manejarlo como opcional
-    // Pero lo más sencillo es que tu vista acepte un NavHostController? o simplemente
-    // no usar el navController dentro del diseño visual.
-
-    MaterialTheme { // Es buena práctica envolverlo en tu tema
+    MaterialTheme { 
         VistaAgregarProducto(
             viewModel = viewModelFalso,
             onVolver = {},
-            // Si NavHostController da problemas en Preview, asegúrate de que no se use
-            // dentro de la lógica de dibujo de la interfaz
             navController = androidx.navigation.compose.rememberNavController()
         )
     }

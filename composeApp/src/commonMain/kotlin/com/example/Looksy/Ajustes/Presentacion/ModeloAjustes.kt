@@ -15,7 +15,8 @@ class ModeloAjustes {
         modoOscuroEnabled = false,
         isLoading = false,
         mensajeError = null,
-        contrasena = ""
+        contrasena = "",
+        direccionDespacho = "No configurada"
     ))
         private set
 
@@ -33,14 +34,14 @@ class ModeloAjustes {
             correoAdmin = "owner@looksy.com",
             rfc = "XAXX010101000",
             isVerified = false, // Cambiar a true cuando esté validado en MySQL
-            isLoading = false
+            isLoading = false,
+            direccionDespacho = "Av. Siempre Viva 742"
         )
     }
 
     // Acción para actualizar el switch de alertas
     fun toggleAlertasServidor(enabled: Boolean) {
         state = state.copy(alertasServidorEnabled = enabled)
-        // Opcional: Hacer un PUT/POST al backend para guardar la preferencia
     }
 
     // Acción para actualizar el switch de modo oscuro
@@ -50,7 +51,6 @@ class ModeloAjustes {
 
     // Acción para cuando el dueño envía su RFC a validar
     fun registrarRfcYVerificar(nuevoRfc: String) {
-        // Aquí mandarías el RFC por HTTP POST a tu backend con Prisma
         state = state.copy(rfc = nuevoRfc, isVerified = true)
     }
 
@@ -70,5 +70,7 @@ class ModeloAjustes {
         state = state.copy(descripcion = descripcion)
     }
 
-
+    fun actualizarDireccionDespacho(nuevaDireccion: String) {
+        state = state.copy(direccionDespacho = nuevaDireccion)
+    }
 }

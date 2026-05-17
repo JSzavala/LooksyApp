@@ -20,7 +20,8 @@ fun VistaAjustes(
     viewModel: ModeloAjustes,
     onNavigateBack: () -> Unit,
     onNavigateToEditarPerfil: () -> Unit,
-    onNavigateToCambiarContrasena: () -> Unit
+    onNavigateToCambiarContrasena: () -> Unit,
+    onNavigateToDireccionDespacho: () -> Unit // Nueva navegación
 ) {
     val state = viewModel.state
 
@@ -87,8 +88,10 @@ fun VistaAjustes(
                 SettingsClickableItem(
                     icon = Icons.Default.LocationOn,
                     title = "Dirección de Despacho",
-                    subtitle = "Configura el origen para los envíos"
-                ) { /* Navegar a mapa o formulario de dirección */ }
+                    subtitle = state.direccionDespacho // Ahora muestra la dirección actual
+                ) {
+                    onNavigateToDireccionDespacho() // Navega a la nueva pantalla
+                }
             }
 
             item { SettingsCategoryHeader(title = "Preferencias del Sistema") }
