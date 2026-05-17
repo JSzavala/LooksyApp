@@ -39,6 +39,8 @@ fun VistaCrudtienda(
         it.nombre.contains(textoBusqueda, ignoreCase = true)
     }
 
+    val moradoClaro = Color(0xFFEDE7F6)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -58,7 +60,7 @@ fun VistaCrudtienda(
                     .padding(16.dp),
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = moradoClaro
                 )
             ) {
 

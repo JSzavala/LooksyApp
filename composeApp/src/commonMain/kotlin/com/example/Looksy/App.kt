@@ -25,6 +25,8 @@ import com.example.Looksy.Login.Presentacion.VistaLogin
 import com.example.Looksy.SeleccionTipoCuenta.Presentacion.VistaSeleccionTipoCuenta
 import com.example.Looksy.SubirProducto.Funcionalidad_subirProducto
 import com.example.Looksy.SubirProducto.VistaAgregarProducto
+import com.example.Looksy.Mensajeria.VistaDetalleVenta
+import com.example.Looksy.Mensajeria.VistaVentas
 
 @Composable
 fun App() {
@@ -127,6 +129,20 @@ fun MainContent() {
                         viewModel = viewModel,
                         navController = navController,
                         onVolver = { navController.popBackStack() }
+                    )
+                }
+                composable("ventas") {
+                    VistaVentas(navController)
+                }
+
+                composable("detalleVenta/{ventaId}") { backStackEntry ->
+                    val ventaId = backStackEntry.arguments
+                        ?.getString("ventaId") ?: ""
+                    VistaDetalleVenta(
+                        ventaId = ventaId,
+                        onVolver = {
+                            navController.popBackStack()
+                        }
                     )
                 }
                 composable("ajustes") {

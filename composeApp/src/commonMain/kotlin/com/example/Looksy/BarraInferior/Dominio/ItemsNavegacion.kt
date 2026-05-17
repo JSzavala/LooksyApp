@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
@@ -24,6 +25,12 @@ object ItemsNavegacion {
             selectedIcon = Icons.Filled.Person,
             unselectedIcon = Icons.Outlined.Person,
             route = "perfil"
+        ),
+        ModeloItemBarraInf(
+            title = "Ventas",
+            selectedIcon = Icons.Default.ShoppingCart,
+            unselectedIcon = Icons.Default.ShoppingCart,
+            route = "ventas"
         ),
         ModeloItemBarraInf(
             title = "Ajustes",
