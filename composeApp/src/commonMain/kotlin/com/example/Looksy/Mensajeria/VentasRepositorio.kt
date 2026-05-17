@@ -4,9 +4,9 @@ object VentasRepository {
 
     val ventas = listOf(
         Venta(
-            id = "ORD-001",
+            id = "1",
             producto = "Camisa Azul",
-            cliente = "Juan Pérez",
+            cliente = "Andre",
             direccion = "Av. Insurgentes Sur 1234",
             fechaCompra = "10 May 2026",
             fechaEntrega = "15 May 2026",
@@ -15,15 +15,26 @@ object VentasRepository {
             estado = "Completada"
         ),
         Venta(
-            id = "ORD-002",
+            id = "2",
             producto = "Pantalón Negro",
-            cliente = "María García",
+            cliente = "Alejandro Nava",
             direccion = "Reforma 222",
-            fechaCompra = "11 May 2026",
-            fechaEntrega = "16 May 2026",
+            fechaCompra = "12 May 2026",
+            fechaEntrega = "21 May 2026",
             precio = "$450.00",
             cantidad = 1,
             estado = "Pendiente"
+        ),
+        Venta(
+            id = "3",
+            producto = "Playera",
+            cliente = "Jonathan Alcantar",
+            direccion = "Reforma 222",
+            fechaCompra = "14 May 2026",
+            fechaEntrega = "16 May 2026",
+            precio = "$350.00",
+            cantidad = 1,
+            estado = "Completada"
         )
     )
 
