@@ -175,10 +175,12 @@ fun CuentaTienda(
 
             Button(
                 onClick = {
-                    if (nombreTienda.isEmpty() || correo.isEmpty() || contrasena.isEmpty()) {
+                    if (nombreTienda.isEmpty() || correo.isEmpty() || contrasena.isEmpty() || direccion.isEmpty()) {
                         error = "Por favor, llena los campos obligatorios"
                     } else if (nombreTienda.length < 5) {
                         error = "El nombre de la tienda debe tener al menos 5 caracteres"
+                    } else if (direccion.length < 10) {
+                        error = "La dirección debe tener al menos 10 caracteres"
                     } else if (contrasena.length < 8) {
                         error = "La contraseña debe tener al menos 8 caracteres"
                     } else if (nombreTienda.length > maxLen || correo.length > maxLen || contrasena.length > maxLen || direccion.length > maxLen) {

@@ -1,5 +1,7 @@
 package com.example.Looksy.CrudTienda.Presentacion.Datos
 
+import kotlin.math.roundToInt
+
 data class ProductoTienda(
     val idProducto: Int,
     val nombre: String,
@@ -13,7 +15,7 @@ data class ProductoTienda(
     val precioFormateado: String
         get() {
             val entero = precio.toInt()
-            val decimales = ((precio - entero) * 100).toInt()
+            val decimales = ((precio - entero) * 100).roundToInt()
             return "$$entero.${decimales.toString().padStart(2, '0')}"
         }
 

@@ -125,6 +125,10 @@ fun VistaLogin(
                     error = "La contraseña debe tener al menos 5 caracteres"
                     return@Button
                 }
+                if (!correo.matches(Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"))) {
+                    error = "El formato del correo no es válido"
+                    return@Button
+                }
 
                 cargando = true
                 error = null

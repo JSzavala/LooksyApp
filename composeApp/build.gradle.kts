@@ -26,6 +26,12 @@ kotlin {
     }
 
     sourceSets {
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlinx.serialization.json)
+        }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -72,6 +78,18 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation(libs.robolectric)
+                implementation(libs.compose.ui.test.junit4)
+                implementation(libs.androidx.test.ext.junit)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.ktor.client.mock)
+                implementation(libs.kotlinx.serialization.json)
+            }
+        }
     }
 }
 
@@ -100,9 +118,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     implementation(libs.coil.compose)
     debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
