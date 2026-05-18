@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -28,6 +29,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
@@ -57,8 +59,18 @@ kotlin {
             // Para cargar imágenes
             implementation("io.coil-kt:coil-compose:2.5.0")
 
+            // Ktor HTTP client (para API Express)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+            // kotlinx-serialization
+            implementation(libs.kotlinx.serialization.json)
             // Para layouts tipo grid (Staggered Grid)
             implementation("com.google.accompanist:accompanist-flowlayout:0.32.0")
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,25 +16,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.Looksy.Ajustes.Presentacion.ModeloAjustes
 import com.example.Looksy.CrudTienda.Datos.ProductoRepository
 import com.example.Looksy.CrudTienda.Presentacion.Datos.ProductoTienda
-import com.example.Looksy.SubirProducto.VistaAgregarProducto
-import androidx.compose.material.icons.filled.Search
-import com.example.Looksy.Ajustes.Presentacion.ModeloAjustes
-
+import kotlinx.coroutines.launch
 
 @Composable
 fun VistaCrudtienda(
     navController: NavHostController,
-    viewModelAjustes: ModeloAjustes // Añadido para reflejar cambios de ajustes
+    viewModelAjustes: ModeloAjustes
 ) {
-
     val listaProductos by ProductoRepository.productos.collectAsState()
-    val stateAjustes = viewModelAjustes.state // Obtenemos el estado de ajustes
+    val stateAjustes = viewModelAjustes.state
     val verdeLooksy = MaterialTheme.colorScheme.primary
     var textoBusqueda by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        ProductoRepository.cargarProductos()
+    }
 
     val productosFiltrados = listaProductos.filter {
         it.nombre.contains(textoBusqueda, ignoreCase = true)
@@ -46,14 +48,11 @@ fun VistaCrudtienda(
             .fillMaxSize()
             .background(Color(0xFFF7F7F7))
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
-            // Header tipo perfil
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,15 +62,12 @@ fun VistaCrudtienda(
                     containerColor = moradoClaro
                 )
             ) {
-
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Surface(
                             shape = CircleShape,
                             border = BorderStroke(
@@ -112,13 +108,13 @@ fun VistaCrudtienda(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        stateAjustes.nombreTienda.ifBlank { "Mi Tienda" }, // Refleja el cambio de nombre
+                        stateAjustes.nombreTienda.ifBlank { "Mi Tienda" },
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
 
                     Text(
-                        stateAjustes.descripcion.ifBlank { "Descripción de la tienda" }, // Refleja el cambio de descripción
+                        stateAjustes.descripcion.ifBlank { "Descripción de la tienda" },
                         fontSize = 14.sp
                     )
 
@@ -145,28 +141,19 @@ fun VistaCrudtienda(
 
             OutlinedTextField(
                 value = textoBusqueda,
-                onValueChange = {
-                    textoBusqueda = it
-                },
-                label = {
-                    Text("Buscar producto")
-                },
+                onValueChange = { textoBusqueda = it },
+                label = { Text("Buscar producto") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-
                 shape = RoundedCornerShape(16.dp),
-
                 singleLine = true,
                 leadingIcon = {
                     Icon(Icons.Default.Search, null)
                 }
             )
 
-            if (
-                productosFiltrados.isEmpty()
-                && textoBusqueda.isNotBlank()
-            ) {
+            if (productosFiltrados.isEmpty() && textoBusqueda.isNotBlank()) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
@@ -174,7 +161,7 @@ fun VistaCrudtienda(
                     Text("No se encontraron productos")
                 }
             }
-            // Grid de productos
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
@@ -186,18 +173,17 @@ fun VistaCrudtienda(
             ) {
                 items(productosFiltrados) { producto ->
                     CardProducto(
-                        producto,
-                        verdeLooksy,
-                        navController
+                        producto = producto,
+                        colorBoton = verdeLooksy,
+                        navController = navController,
+                        scope = scope
                     )
                 }
             }
         }
 
         FloatingActionButton(
-            onClick = {
-                navController.navigate("agregar")
-            },
+            onClick = { navController.navigate("agregar") },
             containerColor = verdeLooksy,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -212,25 +198,23 @@ fun VistaCrudtienda(
 fun CardProducto(
     producto: ProductoTienda,
     colorBoton: Color,
-    navController: NavHostController
+    navController: NavHostController,
+    scope: kotlinx.coroutines.CoroutineScope
 ) {
-
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
                     .background(
-                        producto.colorPlaceholder,
+                        Color(producto.imagenColor),
                         RoundedCornerShape(12.dp)
                     )
             )
@@ -243,7 +227,7 @@ fun CardProducto(
             )
 
             Text(
-                producto.precio,
+                producto.precioFormateado,
                 color = Color(0xFF00A86B),
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 16.sp
@@ -255,29 +239,24 @@ fun CardProducto(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-
                 Button(
                     onClick = {
-                        navController.navigate(
-                            "agregar?productoId=${producto.id}"
-                        )
+                        navController.navigate("agregar?productoId=${producto.idProducto}")
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorBoton
                     ),
                     shape = RoundedCornerShape(12.dp)
-
                 ) {
-                    Text(
-                        "Modificar",
-                        fontSize = 11.sp
-                    )
+                    Text("Modificar", fontSize = 11.sp)
                 }
 
                 Button(
                     onClick = {
-                        ProductoRepository.eliminarProducto(producto.id)
+                        scope.launch {
+                            ProductoRepository.eliminarProducto(producto.idProducto)
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -285,10 +264,7 @@ fun CardProducto(
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        "Eliminar",
-                        fontSize = 11.sp
-                    )
+                    Text("Eliminar", fontSize = 11.sp)
                 }
             }
         }

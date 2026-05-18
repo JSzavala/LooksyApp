@@ -10,11 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Inventory
+import androidx.compose.material.icons.filled.Label
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,31 +32,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.Inventory
-import androidx.compose.material.icons.filled.Description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VistaAgregarProducto( 
+fun VistaAgregarProducto(
     viewModel: Funcionalidad_subirProducto = Funcionalidad_subirProducto(),
     onVolver: () -> Unit,
     navController: NavHostController
 ) {
     val scrollState = rememberScrollState()
-    val tallas = listOf("CH", "M", "G", "XL")
-    
-    // Validaciones numéricas
+    val scope = rememberCoroutineScope()
+
     val precioValue = viewModel.precioPrenda.toDoubleOrNull()
     val stockValue = viewModel.stockPrenda.toIntOrNull()
-    
-    // Validación para habilitar el botón de publicar
+
     val esValido = viewModel.nombrePrenda.isNotBlank() &&
-                   precioValue != null && precioValue >= 1.0 && precioValue <= 5000.0 &&
-                   stockValue != null && stockValue >= 1 && stockValue <= 300 &&
-                   viewModel.descripcionPrenda.isNotBlank() &&
-                   viewModel.tallasSeleccionadas.isNotEmpty()
+            precioValue != null && precioValue >= 1.0 && precioValue <= 5000.0 &&
+            stockValue != null && stockValue >= 1 && stockValue <= 300 &&
+            viewModel.descripcionPrenda.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -99,8 +94,6 @@ fun VistaAgregarProducto(
                 value = viewModel.precioPrenda,
                 onValueChange = { input ->
                     if (input.isEmpty() || input.matches(Regex("""^\d*\.?\d{0,2}$"""))) {
-                        // Opcional: restringir entrada inmediata si supera 5000? 
-                        // Mejor dejar que el usuario escriba y validar con esValido/isError
                         viewModel.precioPrenda = input
                     }
                 },
@@ -119,7 +112,7 @@ fun VistaAgregarProducto(
                 },
                 isError = precioValue == null && viewModel.precioPrenda.isNotEmpty() || (precioValue != null && (precioValue < 1.0 || precioValue > 5000.0))
             )
-            
+
             OutlinedTextField(
                 value = viewModel.stockPrenda,
                 onValueChange = { input ->
@@ -142,34 +135,6 @@ fun VistaAgregarProducto(
                 },
                 isError = stockValue == null && viewModel.stockPrenda.isNotEmpty() || (stockValue != null && (stockValue < 1 || stockValue > 300))
             )
-            
-            Column {
-                Text("Talla disponible:", style = MaterialTheme.typography.bodyLarge)
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    tallas.forEach { talla ->
-                        val estaSeleccionada = viewModel.tallasSeleccionadas.contains(talla)
-
-                        FilterChip(
-                            selected = estaSeleccionada,
-                            onClick = {
-                                if (estaSeleccionada) {
-                                    viewModel.tallasSeleccionadas.remove(talla)
-                                } else {
-                                    viewModel.tallasSeleccionadas.add(talla)
-                                }
-                            },
-                            label = { Text(talla) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF6750A4),
-                                selectedLabelColor = Color.White
-                            )
-                        )
-                    }
-                }
-            }
 
             OutlinedTextField(
                 value = viewModel.descripcionPrenda,
@@ -191,7 +156,7 @@ fun VistaAgregarProducto(
                     .fillMaxWidth()
                     .height(200.dp)
                     .background(Color(0xFFF0F0F0), shape = RoundedCornerShape(12.dp))
-                    .clickable { /* Aquí se abrira la galeria */ },
+                    .clickable { },
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -206,7 +171,7 @@ fun VistaAgregarProducto(
             }
 
             Button(
-                onClick = { if (esValido) viewModel.publicar(navController) },
+                onClick = { if (esValido) viewModel.publicar(navController, scope) },
                 enabled = esValido,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (esValido) Color(0xFF6750A4) else Color.Gray,
@@ -221,13 +186,12 @@ fun VistaAgregarProducto(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun VistaPreviaAgregar() {
     val viewModelFalso = Funcionalidad_subirProducto()
 
-    MaterialTheme { 
+    MaterialTheme {
         VistaAgregarProducto(
             viewModel = viewModelFalso,
             onVolver = {},
